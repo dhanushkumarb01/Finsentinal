@@ -7,7 +7,7 @@
 
 | # | Phase | Status | Evidence |
 |---|---|---|---|
-| 0 | Verify & de-risk | 🟡 mostly done — Wokwi route + ESP32 speed pending (tunnel blocked on this network, see below) | `demo/tests` 14/14 pass; measurements below |
+| 0 | Verify & de-risk | ✅ done 2026-11-22 (reported to user) | `demo/tests` 14/14 pass; Wokwi probe ran end-to-end via localhost.run; measurements below |
 | 1 | Core engine | ⏳ | — |
 | 2 | Device realism | ⏳ | — |
 | 3 | Wokwi boards | ⏳ | — |
@@ -50,10 +50,15 @@
 **Contradictions / risks found (reported to user)**
 1. Wokwi simulated ESP32 is capped at ~8 MHz by default (not 240 MHz) → on-board training and
    TLS are slow; must be measured (probe ready in `demo/wokwi/probe/`).
-2. **`api.trycloudflare.com` is blocked on the current network** (TLS reset; cloudflare.com,
-   github.com, wokwi.com are fine). localhost.run (SSH, no download) reached a URL in a quick
-   test but needs user approval as a different third-party service. Demo-day network may
-   differ — re-test there.
+2. **`api.trycloudflare.com` is blocked on the user's network (a mobile hotspot)** (TLS reset;
+   cloudflare.com, github.com, wokwi.com are fine). User approved **localhost.run** (SSH, no
+   download, no account) as the tunnel; the Wokwi probe reached the laptop through it.
+   Free localhost.run **rotates the domain every few minutes and drops connections** →
+   `scripts/tunnel_lhr.sh` auto-restarts and writes the current URL to
+   `.state/tunnel_url.txt`. For stage use the boards must learn the URL at runtime
+   (or the user creates a free localhost.run account + SSH key for a stable domain — open
+   decision). Wokwi's simulated WiFi took > 90 s to associate on the first attempts (status
+   stuck at 0), then worked — firmware must wait/retry generously.
 3. FinSentinel's detector uses only absolute weight statistics; `max_update_l2_norm` is
    hard-disabled in `core/config.py`. An honest drifting device is therefore unlikely to be
    flagged → scene 7 must be measured honestly in Phase 2.
@@ -68,4 +73,7 @@
 |---|---|---|
 | Central MLP test accuracy (9 UCI test subjects) | **0.883** (untrained 0.219) | `scripts/phase0_har.py`, SGD lr 0.05, bs 32, 30 epochs, 21 train subjects |
 | Central model on each device subject | 0.894 – 0.997 | same run |
-| ESP32 training speed in Wokwi | _pending (probe)_ | `demo/wokwi/probe` + `scripts/phase0_probe_server.py` |
+| ESP32 training speed in Wokwi (browser, free plan, default CPU cap) | **2.1 s simulated / ≤ 5.2 s real per epoch** (340 samples, 64→32→6, bs 32); 3 epochs = 6.4 s sim, 15.5 s wall incl. one HTTPS request; sim speed ≈ 41 % | `demo/wokwi/probe` + `scripts/phase0_probe_server.py`, 2026-11-22 |
+| ESP32 Ed25519 sign (rweather Crypto) | **matches FinSentinel vector byte-for-byte**; 1.6 s simulated | probe `/ed25519?match=1` |
+| ESP32 HTTPS request via tunnel (TLS, `setInsecure` in probe) | ~ 6–9 s real per request (incl. TLS handshake) | gap between probe requests |
+| Wokwi browser compiler | arduino-esp32 **3.3.12**; static DRAM limit hit with 87 KB float array → store samples int8 (or const in flash) | build log |
