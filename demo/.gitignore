@@ -1,16 +1,25 @@
-# Never commit: environments, data, runtime state, secrets, downloaded tools
+# Local-only state — never commit
 .venv/
-.data/
 .state/
+.data/
 tools/
 node_modules/
 dist/
-*.pem
-*.key
+__pycache__/
+*.pyc
+.pytest_cache/
 .env
 .env.*
+*.pem
+*.key
+
+# Generated secrets (device private keys, firmware key headers, tokens)
+secrets/
 wokwi/**/secrets.h
+wokwi/**/generated_keys.h
+wokwi/**/.pio/
+wokwi/**/build/
+
+# Recordings: only the golden rehearsal run is committed
 recordings/*.jsonl
 !recordings/golden.jsonl
-__pycache__/
-.pytest_cache/

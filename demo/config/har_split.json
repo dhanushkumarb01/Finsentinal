@@ -1,0 +1,8 @@
+{
+  "_doc": "Fixed subject split for UCI HAR (30 subjects). Each device holds exactly one subject. The feature subset is chosen on 'selection' subjects only. 'test' = the 9 subjects of UCI's own test split; it is used for global accuracy. 'drift_source' subjects are held back as extra data for drift scenarios. Never change this file without recalibrating thresholds.",
+  "software_devices": {"phone-01": 1, "phone-02": 5, "phone-03": 11, "phone-04": 14, "phone-05": 17, "phone-06": 22},
+  "wokwi_boards": {"esp32-01": 3, "esp32-02": 15, "esp32-03": 19},
+  "selection": [6, 7, 16, 21, 23, 26],
+  "test": [2, 4, 9, 10, 12, 13, 18, 20, 24],
+  "drift_source": [8, 25, 27, 28, 29, 30]
+}
