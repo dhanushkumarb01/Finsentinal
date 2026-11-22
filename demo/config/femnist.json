@@ -1,0 +1,87 @@
+{
+ "title": "FEMNIST study: does drift-caused absence change what FL learns?",
+ "note": "Separate simulation study (FEMNIST handwriting, 62 classes), not produced by this demo. Pilot = 25 clients x 25 rounds, seed 0; MVP sweep rows appear only for finished runs (sweep in progress). Same dropout rate in every row \u2014 only the cause differs.",
+ "series": [
+  {
+   "label": "FedAvg \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.6113,
+   "drift_cohort_accuracy": 0.619
+  },
+  {
+   "label": "FedAvg \u00b7 Dropout explained by observables (MAR)",
+   "final_accuracy": 0.6094,
+   "drift_cohort_accuracy": 0.6405
+  },
+  {
+   "label": "FedAvg \u00b7 Drift-causal dropout (MNAR)",
+   "final_accuracy": 0.614,
+   "drift_cohort_accuracy": 0.6167
+  },
+  {
+   "label": "FedAvg \u00b7 Drift-causal, threshold (MNAR-thr.)",
+   "final_accuracy": 0.5974,
+   "drift_cohort_accuracy": 0.619
+  },
+  {
+   "label": "MVP fedavg \u00b7 Dropout explained by observables (MAR)",
+   "final_accuracy": 0.8154,
+   "drift_cohort_accuracy": 0.82
+  },
+  {
+   "label": "MVP fedipw_estimated \u00b7 Dropout explained by observables (MAR)",
+   "final_accuracy": 0.8097,
+   "drift_cohort_accuracy": 0.82
+  },
+  {
+   "label": "MVP fedipw_oracle \u00b7 Dropout explained by observables (MAR)",
+   "final_accuracy": 0.8161,
+   "drift_cohort_accuracy": 0.8228
+  },
+  {
+   "label": "MVP flfdms \u00b7 Dropout explained by observables (MAR)",
+   "final_accuracy": 0.8152,
+   "drift_cohort_accuracy": 0.8235
+  },
+  {
+   "label": "MVP fedavg \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.8166,
+   "drift_cohort_accuracy": 0.8249
+  },
+  {
+   "label": "MVP feddrift \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.8243,
+   "drift_cohort_accuracy": 0.8376
+  },
+  {
+   "label": "MVP fedipw_estimated \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.8193,
+   "drift_cohort_accuracy": 0.8312
+  },
+  {
+   "label": "MVP fedipw_oracle \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.8166,
+   "drift_cohort_accuracy": 0.8249
+  },
+  {
+   "label": "MVP flfdms \u00b7 Random dropout (MCAR)",
+   "final_accuracy": 0.8159,
+   "drift_cohort_accuracy": 0.8207
+  },
+  {
+   "label": "MVP fedavg \u00b7 Drift-causal dropout (MNAR)",
+   "final_accuracy": 0.8198,
+   "drift_cohort_accuracy": 0.8242
+  },
+  {
+   "label": "MVP fedipw_estimated \u00b7 Drift-causal dropout (MNAR)",
+   "final_accuracy": 0.8177,
+   "drift_cohort_accuracy": 0.8221
+  },
+  {
+   "label": "MVP fedipw_oracle \u00b7 Drift-causal dropout (MNAR)",
+   "final_accuracy": 0.8193,
+   "drift_cohort_accuracy": 0.8228
+  }
+ ],
+ "source": "drift-causal-fl/results/day5_v3 (pilot) and results/mvp (finished runs only)"
+}

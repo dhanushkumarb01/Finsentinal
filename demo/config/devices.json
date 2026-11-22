@@ -1,0 +1,134 @@
+{
+ "_doc": "Device fleet. Virtual devices run on the laptop (one process each) behind their own Toxiproxy link; Wokwi boards run in the browser simulator. Subjects must match har_split.json. network profiles: latency/jitter ms, bandwidth KB/s (0 = unlimited). drift: when triggered (attack scene 'drift', or automatically at 'auto_start_round' if not null) the device's data shifts to the listed activities (label shift, as in the research), mixed with drift-source subjects. Battery: percent at start, drain per training round, recharge per idle round.",
+ "network_profiles": {
+  "wifi": {
+   "latency": 15,
+   "jitter": 5,
+   "bandwidth": 0,
+   "signal_dbm": -55
+  },
+  "4g": {
+   "latency": 60,
+   "jitter": 20,
+   "bandwidth": 0,
+   "signal_dbm": -68
+  },
+  "3g": {
+   "latency": 180,
+   "jitter": 60,
+   "bandwidth": 200,
+   "signal_dbm": -82
+  },
+  "weak": {
+   "latency": 1500,
+   "jitter": 500,
+   "bandwidth": 3,
+   "signal_dbm": -97
+  }
+ },
+ "devices": [
+  {
+   "id": "phone-01",
+   "kind": "virtual",
+   "label": "Phone 1",
+   "subject": 1,
+   "network": "wifi",
+   "battery": 92,
+   "drain": 3,
+   "recharge": 1
+  },
+  {
+   "id": "phone-02",
+   "kind": "virtual",
+   "label": "Phone 2",
+   "subject": 5,
+   "network": "4g",
+   "battery": 78,
+   "drain": 4,
+   "recharge": 1
+  },
+  {
+   "id": "phone-03",
+   "kind": "virtual",
+   "label": "Phone 3",
+   "subject": 11,
+   "network": "wifi",
+   "battery": 85,
+   "drain": 3,
+   "recharge": 1
+  },
+  {
+   "id": "phone-04",
+   "kind": "virtual",
+   "label": "Phone 4",
+   "subject": 14,
+   "network": "3g",
+   "battery": 64,
+   "drain": 5,
+   "recharge": 2
+  },
+  {
+   "id": "phone-05",
+   "kind": "virtual",
+   "label": "Phone 5",
+   "subject": 17,
+   "network": "4g",
+   "battery": 88,
+   "drain": 3,
+   "recharge": 1,
+   "drift": {
+    "auto_start_round": null,
+    "keep_classes": [
+     1,
+     2
+    ],
+    "mix_subjects": [
+     8,
+     25,
+     27
+    ]
+   }
+  },
+  {
+   "id": "phone-06",
+   "kind": "virtual",
+   "label": "Phone 6",
+   "subject": 22,
+   "network": "wifi",
+   "battery": 30,
+   "drain": 6,
+   "recharge": 2
+  },
+  {
+   "id": "esp32-01",
+   "kind": "wokwi",
+   "label": "ESP32 board 1",
+   "subject": 3,
+   "network": "wokwi-guest",
+   "battery": 100
+  },
+  {
+   "id": "esp32-02",
+   "kind": "wokwi",
+   "label": "ESP32 board 2",
+   "subject": 15,
+   "network": "wokwi-guest",
+   "battery": 100
+  },
+  {
+   "id": "esp32-03",
+   "kind": "wokwi",
+   "label": "ESP32 board 3",
+   "subject": 19,
+   "network": "wokwi-guest",
+   "battery": 100
+  }
+ ],
+ "drift_dropout": {
+  "_doc": "Drift-causal dropout (research mechanism, MNAR). Each round the device computes D_indep (fldemo/drift.py: squared L2 between the mean frozen-random-feature embedding of its current data and its first-seen reference, as in drift-causal-fl/src/drift/model_independent.py). If D >= min_score it skips with probability sigmoid(alpha + beta*D), seeded per device+round. Calibrated: clean D = 0.0, drifted D ~ 0.23 -> p ~ 0.83.",
+  "alpha": -3.0,
+  "beta": 20.0,
+  "min_score": 0.05
+ },
+ "low_battery_percent": 15
+}

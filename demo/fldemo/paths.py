@@ -1,5 +1,6 @@
 """Filesystem locations used by the demo. Everything lives under demo/."""
 
+import os
 from pathlib import Path
 
 DEMO_DIR = Path(__file__).resolve().parent.parent
@@ -7,9 +8,10 @@ REPO_ROOT = DEMO_DIR.parent
 FINSENTINEL_DIR = REPO_ROOT / "finsentinel"
 
 DATA_DIR = DEMO_DIR / ".data"            # gitignored: downloaded dataset
-STATE_DIR = DEMO_DIR / ".state"          # gitignored: SQLite DB, keys, tokens, logs
+# gitignored: SQLite DB, keys, tokens, logs. Tests point FLDEMO_STATE_DIR at a temp dir.
+STATE_DIR = Path(os.environ.get("FLDEMO_STATE_DIR", DEMO_DIR / ".state"))
 CONFIG_DIR = DEMO_DIR / "config"         # committed: split + feature subset
-RECORDINGS_DIR = DEMO_DIR / "recordings"
+RECORDINGS_DIR = Path(os.environ.get("FLDEMO_RECORDINGS_DIR", DEMO_DIR / "recordings"))
 TOOLS_DIR = DEMO_DIR / "tools"           # gitignored: helper binaries
 
 HAR_ZIP = DATA_DIR / "download" / "har.zip"

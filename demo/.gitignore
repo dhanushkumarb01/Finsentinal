@@ -23,3 +23,4 @@ wokwi/**/build/
 # Recordings: only the golden rehearsal run is committed
 recordings/*.jsonl
 !recordings/golden.jsonl
+wokwi/**/board_secrets.h

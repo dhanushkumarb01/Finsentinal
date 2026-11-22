@@ -106,9 +106,25 @@ def feature_indices() -> tuple[int, ...]:
     return tuple(spec["indices"])
 
 
+@lru_cache(maxsize=1)
+def _subset_table() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """(X[:, 64-feature subset], y, subject), cached in demo/.data/har_subset.npz."""
+    from fldemo.paths import DATA_DIR
+
+    cache = DATA_DIR / "har_subset.npz"
+    idx = np.asarray(feature_indices())
+    if cache.exists():
+        with np.load(cache) as z:
+            if np.array_equal(z["idx"], idx):
+                return z["x"], z["y"], z["s"]
+    data = load_har()
+    x, y, s = data.x[:, idx].copy(), data.y.copy(), data.subject.copy()
+    np.savez(cache, x=x, y=y, s=s, idx=idx)
+    return x, y, s
+
+
 def subject_arrays(subject_ids) -> tuple[np.ndarray, np.ndarray]:
     """Return (X[:, subset], y) for the given subjects, in file order."""
-    data = load_har()
-    m = subjects_mask(data, subject_ids)
-    idx = list(feature_indices())
-    return data.x[m][:, idx].copy(), data.y[m].copy()
+    x, y, s = _subset_table()
+    m = np.isin(s, np.asarray(list(subject_ids), dtype=np.int64))
+    return x[m].copy(), y[m].copy()

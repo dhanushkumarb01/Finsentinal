@@ -8,12 +8,12 @@
 | # | Phase | Status | Evidence |
 |---|---|---|---|
 | 0 | Verify & de-risk | ✅ done 2026-11-22 (reported to user) | `demo/tests` 14/14 pass; Wokwi probe ran end-to-end via localhost.run; measurements below |
-| 1 | Core engine | ⏳ | — |
-| 2 | Device realism | ⏳ | — |
-| 3 | Wokwi boards | ⏳ | — |
-| 4 | Mission Control | ⏳ | — |
-| 5 | Attack scenes | ⏳ | — |
-| 6 | Rehearsal & hand-over | ⏳ | — |
+| 1 | Core engine | ✅ built + verified 2026-11-22 | `tests/test_integration_round.py` (full in-process rounds); live runs: FinSentinel+coordinator+Caddy+Toxiproxy+6 phones, accuracy 0.22→0.55 in 4 rounds, assisted approvals, signed downlink |
+| 2 | Device realism | ✅ built + verified | live rehearsal: low-battery skip, Toxiproxy weak-signal skip, drift-causal dropout (D_indep) |
+| 3 | Wokwi boards | 🟡 built; host tests 24/24; **needs the Wokwi run by the user** | `demo/wokwi/board1-3`, `tests/test_firmware_host.py` |
+| 4 | Mission Control | ✅ built; Vitest 41/41; typecheck + build clean; live stream + CORS POST verified; replay with no backend verified | `demo/mission-control` |
+| 5 | Attack scenes | ✅ every scene verified live (replay 409, tamper 422, forge 401, poison quarantined, MITM no plaintext + impostor refused); Wazuh path built, not run (needs sweep paused) | `tests/test_mitm.py`, integration test, `scripts/rehearse.py` |
+| 6 | Rehearsal & hand-over | 🟡 two consecutive cold-start runs of the 7-scene script: **13/13 checks each** (virtual fleet, `--wokwi off`); golden recording saved; runbook + presenter script written. Still open: a run with the Wokwi boards + user walkthrough | `scripts/rehearse.py`, `recordings/golden.jsonl` |
 
 ## Decisions log
 - 2026-11-22: Plan locked — all software; 2–3 Wokwi ESP32 boards + ~6 software devices;
@@ -77,3 +77,46 @@
 | ESP32 Ed25519 sign (rweather Crypto) | **matches FinSentinel vector byte-for-byte**; 1.6 s simulated | probe `/ed25519?match=1` |
 | ESP32 HTTPS request via tunnel (TLS, `setInsecure` in probe) | ~ 6–9 s real per request (incl. TLS handshake) | gap between probe requests |
 | Wokwi browser compiler | arduino-esp32 **3.3.12**; static DRAM limit hit with 87 KB float array → store samples int8 (or const in flash) | build log |
+
+## Phases 1–6 build (2026-11-22)
+
+**Architecture as built** (contracts: `docs/PROTOCOL.md`, `docs/EVENTS.md`)
+- `run_demo.py` supervises: FinSentinel `fldemo/fs_server.py` (:8000, own SQLite, schema + 9 keys
+  registered, calibrated thresholds via env, audit webhook → coordinator) · coordinator
+  `fldemo/coordinator.py` (:8200) · Caddy (:8443 TLS with demo CA, :8480 tunnel origin; only
+  device routes exposed) · Toxiproxy (:8474, links :9101–9106) · Mission Control static (:5180) ·
+  6 phones `fldemo/device.py` · tunnel (localhost.run via ssh, or cloudflared) + signed ntfy beacon.
+- **FinSentinel's real routes** differ from the build prompt: approvals are
+  `/api/v1/updates/{client}/{update}/approve|reject|status`, aggregation `/api/v1/aggregation/run`.
+- **FinSentinel's real check order:** integrity (SHA-256) → signature → schema → policy → replay →
+  anomaly. The 5 gate lights follow this order.
+- Virtual phones train with a NumPy port of the model (`fldemo/npmodel.py`, tested equal to
+  PyTorch) to save ~100 MB RAM per process.
+
+**Calibration (`config/thresholds.json`, method in `scripts/calibrate_thresholds.py`)**
+- 30 simulated clean rounds, 3 epochs, lr 0.1, all 9 device subjects; thresholds = max clean ×1.25:
+  L2 norm 11.61, |mean| 0.155, std 0.243, zero-fraction 0.5. Clean false positives **0/270**;
+  poisoned ×8 updates trigger **3/3 rules** (CRITICAL → quarantined) in 54/54 cases.
+- Drift device (label shift to stair activities): FinSentinel flags **0/21** — honest updates look
+  normal. A coordinator cosine-to-cohort monitor also cannot separate it (flag rate 0). Device-side
+  D_indep (research estimator #2): clean 0.0, drifted ≈0.23 → drives drift-causal dropout
+  (p = sigmoid(−3 + 20·D) ≈ 0.83).
+- **Deviation from the locked design (reported to user):** scene 7 cannot honestly show the
+  drifting device being *flagged*. It shows: FinSentinel lets the honest update through, the device
+  drops out *because of* its drift, the server only sees the absence → research slide.
+
+**Rehearsals (live, `--wokwi off`, 14 rounds × 15 s):** two consecutive cold starts, 13/13 checks
+each (accuracy 0.22→0.54/0.55 by round 2–3; low battery; weak signal; poison quarantined
+(L2 49.6 vs 11.6); replay 409; tamper 422; forge 401; MITM 3.6 KB captured, no plaintext,
+impostor refused; drift dropout 1–2 rounds; drift not quarantined). Golden = run-20261122-200935.
+
+**FEMNIST slide (`config/femnist.json`, `scripts/make_femnist_summary.py`):** Day-5 pilot +
+12 finished MVP runs. Honest note: in these runs MNAR (drift-causal) accuracy is not visibly
+different from MCAR yet; the slide states it is a separate, partial study.
+
+**Open items**
+1. Run the 3 Wokwi boards against a live `run_demo.py` (firmware compiled only on host so far):
+   check pin names, core-3.3.12 compile, TLS to `*.lhr.life` (GTS) and ntfy.sh (LE YE1 via X1/X2
+   cross-sign), heap during POST, round timing (90 s rounds).
+2. `--wazuh` path: built (FinSentinel's own forwarder → `.state/siem/`), not run (needs sweep paused).
+3. FinSentinel UI (:5173) starts only if `finsentinel/frontend/node_modules` exists (`npm ci` there).

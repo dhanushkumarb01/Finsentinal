@@ -1,0 +1,9 @@
+{
+  "mode": "replay",
+  "ws_url": "ws://127.0.0.1:8200/fl/ws",
+  "http_url": "http://127.0.0.1:8200",
+  "admin_token": "",
+  "replay_url": "/sample-recording.jsonl",
+  "finsentinel_ui": "http://localhost:5173",
+  "femnist_url": "/femnist.json"
+}

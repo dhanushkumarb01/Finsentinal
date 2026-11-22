@@ -1,0 +1,2 @@
+# Demo-only extras on top of finsentinel/requirements.lock (installed by demo/setup.py).
+pytest>=8.3,<10
