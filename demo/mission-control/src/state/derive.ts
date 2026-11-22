@@ -1,5 +1,6 @@
 // Small pure view-helpers on top of the reducer state (no new facts are created here).
 
+import type { WazuhDecisionEv } from "../types";
 import type { DashState, DeviceView, GateRecord } from "./reducer";
 import { verdictOf } from "./reducer";
 
@@ -39,6 +40,8 @@ export function stateWords(d: DeviceView): string {
       return "Offline";
     case "error":
       return "Error";
+    case "suspended":
+      return `Suspended${d.suspendedRule ? ` (rule ${d.suspendedRule})` : ""}`;
     default:
       return d.state;
   }
@@ -108,4 +111,75 @@ export function fmtClock(t: number | null | undefined): string {
   if (t == null) return "--:--:--";
   const d = new Date(t * 1000);
   return d.toLocaleTimeString([], { hour12: false });
+}
+
+// ---------- v2 spotlight helpers (pure; time = last event's t) ----------
+
+/** An interesting result stays in the spotlight this long before routine traffic replaces it. */
+export const SPOTLIGHT_HOLD_S = 12;
+
+function isInterestingGate(g: GateRecord): boolean {
+  const k = verdictOf(g).kind;
+  return k !== "accepted" && k !== "checked";
+}
+
+/** The gate result to show on the FinSentinel stage. */
+export function spotlightGate(s: DashState): { key: string; g: GateRecord } | null {
+  const now = s.lastT ?? 0;
+  for (const n of s.notable) {
+    if (now - n.t > SPOTLIGHT_HOLD_S) break;
+    if (n.kind === "gate" && n.key && s.gates[n.key] && isInterestingGate(s.gates[n.key])) return { key: n.key, g: s.gates[n.key] };
+  }
+  if (s.lastGateId && s.gates[s.lastGateId]) return { key: s.lastGateId, g: s.gates[s.lastGateId] };
+  return null;
+}
+
+export type DecisionSpot =
+  | { kind: "wazuh"; w: WazuhDecisionEv; g: GateRecord | null }
+  | { kind: "approval"; g: GateRecord };
+
+/** The decision to show on the decision stage (Wazuh's, or the coordinator's in v1). */
+export function spotlightDecision(s: DashState): DecisionSpot | null {
+  const now = s.lastT ?? 0;
+  const gateOf = (id: string | null) => (id && s.gates[id] ? s.gates[id] : null);
+  if (s.wazuhDecisions.length) {
+    const hot = s.wazuhDecisions.find((w) => w.decision !== "approve" && now - w.t <= SPOTLIGHT_HOLD_S);
+    const w = hot ?? s.wazuhDecisions[0];
+    return { kind: "wazuh", w, g: gateOf(w.update_id) };
+  }
+  for (const n of s.notable) {
+    if (now - n.t > SPOTLIGHT_HOLD_S) break;
+    if (n.kind === "decision" && n.key && s.gates[n.key]?.decision) return { kind: "approval", g: s.gates[n.key] };
+  }
+  let best: GateRecord | null = null;
+  for (const g of Object.values(s.gates)) if (g.decision && (!best || g.ev.seq > best.ev.seq)) best = g;
+  return best ? { kind: "approval", g: best } : null;
+}
+
+export interface Tally {
+  accepted: number;
+  quarantined: number;
+  rejected: number;
+  blocked: number;
+  waiting: number;
+  suspended: number;
+}
+
+export function tally(s: DashState): Tally {
+  const t: Tally = { accepted: 0, quarantined: 0, rejected: 0, blocked: 0, waiting: 0, suspended: 0 };
+  for (const g of Object.values(s.gates)) {
+    const k = verdictOf(g).kind;
+    if (k === "accepted") t.accepted++;
+    else if (k === "quarantined") t.quarantined++;
+    else if (k === "rejected") t.rejected++;
+    else if (k === "blocked") t.blocked++;
+    else if (k === "review") t.waiting++;
+  }
+  t.suspended = Object.values(s.devices).filter((d) => d.suspended).length;
+  return t;
+}
+
+export function deviceLabelOf(s: DashState, id: string | null | undefined): string {
+  if (!id) return "—";
+  return s.devices[id]?.info.label ?? id;
 }

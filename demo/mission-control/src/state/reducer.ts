@@ -13,21 +13,25 @@ import type {
   LocalTrainingEv,
   RoundCompletedEv,
   RunFinishedEv,
+  RoundPhaseName,
   RunStartedEv,
   UpdateSubmittedEv,
+  WazuhDecisionEv,
 } from "../types";
 
 export type Phase = "waiting" | "open" | "finished";
 export type FlightOutcome = "pass" | "held" | "quarantine" | "blocked";
 export type VerdictKind = "accepted" | "review" | "quarantined" | "rejected" | "blocked" | "checked";
 export type FeedSeverity = "info" | "low" | "medium" | "high" | "critical";
-export type FeedSource = "FinSentinel" | "Coordinator" | "Attack" | "Drift monitor";
+export type FeedSource = "FinSentinel" | "Coordinator" | "Attack" | "Drift monitor" | "Wazuh" | "Operator";
 
 export interface GateRecord {
   ev: GateResultEv;
   decision: ApprovalEv["decision"] | null;
   actor: string | null;
   decisionReason: string | null;
+  /** v2 gate_result.decided_by as emitted (null in v1 recordings) */
+  decidedBy: GateResultEv["decided_by"] | null;
 }
 
 export interface DeviceView {
@@ -49,6 +53,10 @@ export interface DeviceView {
   submittedByRound: Record<number, string>; // round -> update_id
   gateByRound: Record<number, string>; // round -> update_id
   lastGateId: string | null;
+  /** v2: Wazuh suspended this device (device_status.state = "suspended") */
+  suspended: boolean;
+  suspendedRule: string | null;
+  suspendedRound: number | null;
 }
 
 export interface Flight {
@@ -91,6 +99,41 @@ export interface TunnelView {
   beacon_published: boolean;
 }
 
+export interface EngineView {
+  engine: "wazuh" | "coordinator";
+  detail: string;
+  dashboard: string | null;
+}
+
+export interface RoundPhaseView {
+  round: number;
+  /** "done" = round_completed received; the other three come from round_phase / round_started */
+  phase: RoundPhaseName | "done";
+  waitingFor: string[];
+  t: number;
+  /** true when this phase came from a v2 round_phase event (not inferred from round_started/completed) */
+  explicit: boolean;
+}
+
+/** Notable moments, used by the narrator. Only references real events (by seq / update id). */
+export type NotableKind = "gate" | "decision" | "wazuh" | "device" | "attack";
+export interface Notable {
+  seq: number;
+  t: number;
+  kind: NotableKind;
+  round: number | null;
+  device: string | null;
+  /** gate key / update id this moment is about, if any */
+  key: string | null;
+  /** device notables: the status that was reported */
+  state?: string;
+  reason?: string | null;
+  detail?: string | null;
+  /** attack notables */
+  scene?: string;
+  outcome?: string | null;
+}
+
 export interface DashState {
   runId: string | null;
   lastSeq: number;
@@ -120,10 +163,18 @@ export interface DashState {
   driftMonitor: Record<string, DriftMonitorEv>; // latest per device
   alerts: FeedItem[]; // newest first
   attacks: AttackEv[];
+  // ---- v2 ----
+  engine: EngineView | null;
+  roundPhase: RoundPhaseView | null;
+  wazuhDecisions: WazuhDecisionEv[]; // newest first
+  wazuhByUpdate: Record<string, WazuhDecisionEv>; // latest decision per update_id
+  notable: Notable[]; // newest first
 }
 
 export const MAX_FLIGHTS = 40;
 export const MAX_ALERTS = 200;
+export const MAX_DECISIONS = 300;
+export const MAX_NOTABLE = 60;
 
 export function initialState(): DashState {
   return {
@@ -154,6 +205,11 @@ export function initialState(): DashState {
     driftMonitor: {},
     alerts: [],
     attacks: [],
+    engine: null,
+    roundPhase: null,
+    wazuhDecisions: [],
+    wazuhByUpdate: {},
+    notable: [],
   };
 }
 
@@ -176,6 +232,55 @@ export function verdictOf(g: GateRecord): { kind: VerdictKind; text: string } {
   if (s === "rejected") return { kind: "rejected", text: "Rejected" };
   if (s === "pending_approval") return { kind: "review", text: "Waiting for review" };
   return { kind: "checked", text: `Checked (${g.ev.http_status})` };
+}
+
+export type Decider = "wazuh" | "coordinator" | "human" | "finsentinel" | "pending" | "none";
+
+/** Classify a free-text approval actor ("wazuh rule 100201 (level 3)", "presenter (Mission Control)", ...). */
+export function deciderOfActor(actor: string): Exclude<Decider, "pending" | "none"> {
+  const a = actor.toLowerCase();
+  if (a.startsWith("wazuh")) return "wazuh";
+  if (/presenter|operator|human|mission control/.test(a)) return "human";
+  if (a.includes("finsentinel")) return "finsentinel";
+  return "coordinator";
+}
+
+/**
+ * Who decided (or is deciding) this update. An actual approval event wins; then an enforced Wazuh
+ * decision; then the gate's own v2 `decided_by`. Blocked requests were stopped by FinSentinel itself.
+ */
+export function deciderOf(g: GateRecord, s?: DashState): Decider {
+  if (g.ev.http_status >= 400) return "finsentinel";
+  if (g.actor) return deciderOfActor(g.actor);
+  const w = s && g.ev.source !== "attack" ? s.wazuhByUpdate[g.ev.update_id] : undefined;
+  if (w && w.enforced && w.decision !== "alert") return "wazuh";
+  if (g.decidedBy && g.decidedBy !== "pending") return g.decidedBy;
+  if (effectiveStatus(g) === "pending_approval") return "pending";
+  return "none";
+}
+
+function isEnforcedWazuh(w: WazuhDecisionEv | undefined): boolean {
+  return !!w && w.enforced && w.decision !== "alert";
+}
+
+/** Device updates with no decision yet (v2: waiting for Wazuh or a human). */
+export function awaitingDecision(s: DashState): GateRecord[] {
+  return Object.values(s.gates)
+    .filter(
+      (g) =>
+        g.ev.source !== "attack" &&
+        g.ev.http_status < 400 &&
+        g.decision == null &&
+        g.ev.approval_status === "pending_approval" &&
+        !isEnforcedWazuh(s.wazuhByUpdate[g.ev.update_id]),
+    )
+    .sort((a, b) => a.ev.seq - b.ev.seq);
+}
+
+export function fmtRisk(r: number | null | undefined): string {
+  if (r == null || !Number.isFinite(r)) return "—";
+  // FinSentinel reports 0-100 integers; older fixtures used 0-1 fractions.
+  return r <= 1 && !Number.isInteger(r) ? String(Math.round(r * 100)) : String(Math.round(r));
 }
 
 /** Where the envelope ends up after the gate. */
@@ -264,6 +369,9 @@ function newDevice(info: DeviceInfo, known: boolean): DeviceView {
     submittedByRound: {},
     gateByRound: {},
     lastGateId: null,
+    suspended: false,
+    suspendedRule: null,
+    suspendedRound: null,
   };
 }
 
@@ -282,6 +390,10 @@ function addState(d: DeviceView, round: number | undefined | null, st: string): 
   const cur = d.statesByRound[round] ?? [];
   if (cur.includes(st)) return d;
   return { ...d, statesByRound: { ...d.statesByRound, [round]: [...cur, st] } };
+}
+
+function pushNotable(s: DashState, n: Notable): DashState {
+  return { ...s, notable: [n, ...s.notable].slice(0, MAX_NOTABLE) };
 }
 
 function pushAlert(s: DashState, item: FeedItem): DashState {
@@ -335,6 +447,14 @@ export const SCENE_NAMES: Record<string, string> = {
  * poison travels as the hacked device's own (signed) update; drift / weak_signal / low_battery /
  * offline / restore change device conditions and never reach the gate as attacker traffic.
  */
+export const WAZUH_VERB: Record<WazuhDecisionEv["decision"], string> = {
+  approve: "approve",
+  quarantine: "quarantine",
+  reject: "reject",
+  suspend_device: "suspend device",
+  alert: "alert only",
+};
+
 export const GATE_ATTACK_SCENES = ["replay", "tamper", "forge", "mitm"];
 
 // ---------- the reducer ----------
@@ -381,7 +501,79 @@ export function reduce(prev: DashState, ev: Ev): DashState {
       return { ...s, tunnel: { url: ev.url, status: ev.status, beacon_published: ev.beacon_published } };
 
     case "round_started":
-      return { ...s, round: ev.round, phase: "open", roundDeadline: ev.deadline };
+      return {
+        ...s,
+        round: ev.round,
+        phase: "open",
+        roundDeadline: ev.deadline,
+        roundPhase: { round: ev.round, phase: "open", waitingFor: [], t: ev.t, explicit: false },
+      };
+
+    case "round_phase":
+      return {
+        ...s,
+        round: Math.max(s.round ?? 0, ev.round),
+        roundPhase: { round: ev.round, phase: ev.phase, waitingFor: ev.waiting_for ?? [], t: ev.t, explicit: true },
+      };
+
+    case "decision_engine":
+      return { ...s, engine: { engine: ev.engine, detail: ev.detail, dashboard: ev.wazuh_dashboard ?? null } };
+
+    case "wazuh_decision": {
+      let out: DashState = { ...s, wazuhDecisions: [ev, ...s.wazuhDecisions].slice(0, MAX_DECISIONS) };
+      if (ev.update_id) {
+        // Keep the decision that decided the update (approve / quarantine / reject); a later
+        // suspend_device or alert about the same update is logged but does not replace it.
+        const prevW = out.wazuhByUpdate[ev.update_id];
+        const decisive = (w: WazuhDecisionEv) => w.decision === "approve" || w.decision === "quarantine" || w.decision === "reject";
+        if (!prevW || decisive(ev) || !decisive(prevW)) {
+          out = { ...out, wazuhByUpdate: { ...out.wazuhByUpdate, [ev.update_id]: ev } };
+        }
+      }
+      if (ev.decision !== "approve") {
+        out = pushNotable(out, { seq: ev.seq, t: ev.t, kind: "wazuh", round: ev.round, device: ev.device, key: ev.update_id });
+      }
+      if (ev.decision === "approve") {
+        const groupKey = `wazuh|approve|${ev.rule_id}|${ev.round}`;
+        const top = out.alerts[0];
+        if (top && top.groupKey === groupKey) {
+          const devices = top.devices?.includes(ev.device) ? top.devices : [...(top.devices ?? []), ev.device];
+          const count = (top.count ?? 1) + 1;
+          const merged: FeedItem = {
+            ...top,
+            id: ev.seq,
+            t: ev.t,
+            count,
+            devices,
+            device: null,
+            title: `Rule ${ev.rule_id} approved ${count} updates`,
+            detail: `round ${ev.round ?? "?"}: ${devices.map((d) => deviceLabel(out, d)).join(", ")}`,
+          };
+          return { ...out, alerts: [merged, ...out.alerts.slice(1)] };
+        }
+        return pushAlert(out, {
+          id: ev.seq,
+          t: ev.t,
+          severity: "info",
+          source: "Wazuh",
+          title: `Rule ${ev.rule_id} approved the update`,
+          detail: ev.rule_description,
+          device: ev.device,
+          groupKey,
+          count: 1,
+          devices: [ev.device],
+        });
+      }
+      return pushAlert(out, {
+        id: ev.seq,
+        t: ev.t,
+        severity: ev.decision === "suspend_device" ? "critical" : ev.decision === "alert" ? "medium" : "high",
+        source: "Wazuh",
+        title: `Rule ${ev.rule_id} (level ${ev.rule_level}) → ${WAZUH_VERB[ev.decision]}${ev.enforced ? "" : " (not enforced)"}`,
+        detail: ev.rule_description + (ev.enforcement_detail ? ` — ${ev.enforcement_detail}` : ""),
+        device: ev.device,
+      });
+    }
 
     case "device_status": {
       let out = withDevice(s, ev.device, (d) => {
@@ -397,9 +589,24 @@ export function reduce(prev: DashState, ev: Ev): DashState {
           reason: ev.reason ?? null,
           detail: ev.detail ?? null,
         };
+        if (ev.state === "suspended") {
+          nd = {
+            ...nd,
+            suspended: true,
+            suspendedRule: ev.reason ?? d.suspendedRule,
+            suspendedRound: d.suspended ? d.suspendedRound : ev.round ?? s.round ?? null,
+          };
+        } else if (d.suspended && !(ev.reason ?? "").toLowerCase().startsWith("suspend")) {
+          // any other status that is not "skipped because suspended" means the suspension was lifted
+          nd = { ...nd, suspended: false, suspendedRule: null, suspendedRound: null };
+        }
         nd = addState(nd, ev.round, ev.state);
         return nd;
       });
+      const prevState = s.devices[ev.device]?.state;
+      if (prevState !== ev.state && ["skipped", "model_rejected", "suspended", "offline", "error"].includes(ev.state)) {
+        out = pushNotable(out, { seq: ev.seq, t: ev.t, kind: "device", round: ev.round ?? s.round, device: ev.device, key: null, state: ev.state, reason: ev.reason ?? null, detail: ev.detail ?? null });
+      }
       if (ev.state === "skipped" && ev.reason === "drift") {
         if (ev.round != null) out = { ...out, driftDropRounds: addUnique(out.driftDropRounds, ev.round) };
         out = { ...out, driftDevices: addUniqueStr(out.driftDevices, ev.device) };
@@ -478,6 +685,7 @@ export function reduce(prev: DashState, ev: Ev): DashState {
         decision: old?.decision ?? orphan?.decision ?? null,
         actor: old?.actor ?? orphan?.actor ?? null,
         decisionReason: old?.decisionReason ?? orphan?.reason ?? null,
+        decidedBy: ev.decided_by ?? null,
       };
       let out: DashState = { ...s, gates: { ...s.gates, [key]: rec }, lastGateId: key };
       if (orphan) {
@@ -494,6 +702,14 @@ export function reduce(prev: DashState, ev: Ev): DashState {
           ),
         );
       }
+      const flagged =
+        ev.http_status >= 400 ||
+        ev.checks.normal === "fail" ||
+        ev.checks.normal === "warn" ||
+        (ev.severity != null && !isLowSeverity(ev.severity)) ||
+        ev.approval_status === "quarantined" ||
+        ev.approval_status === "rejected";
+      if (flagged) out = pushNotable(out, { seq: ev.seq, t: ev.t, kind: "gate", round: ev.round, device: ev.device, key });
       const outcome = flightOutcomeOf(rec);
       const label = flightLabelOf(outcome, ev.http_status >= 400 ? ev.http_status : null);
       let idx = out.flights.findIndex(
@@ -541,6 +757,12 @@ export function reduce(prev: DashState, ev: Ev): DashState {
           },
         };
       }
+      const who = deciderOfActor(ev.actor);
+      if (ev.decision !== "approved" || who === "human") {
+        out = pushNotable(out, { seq: ev.seq, t: ev.t, kind: "decision", round: ev.round, device: ev.device, key: ev.update_id });
+      }
+      // Wazuh's own decision is already in the feed via wazuh_decision; don't log it twice.
+      if (who === "wazuh") return out;
       const groupKey = `approval|${ev.decision}|${ev.actor}|${ev.round}`;
       const top = out.alerts[0];
       if (top && top.groupKey === groupKey) {
@@ -562,7 +784,7 @@ export function reduce(prev: DashState, ev: Ev): DashState {
         id: ev.seq,
         t: ev.t,
         severity: ev.decision === "approved" ? "info" : "high",
-        source: "FinSentinel",
+        source: who === "human" ? "Operator" : who === "coordinator" ? "Coordinator" : "FinSentinel",
         title: `Update ${ev.decision} by ${ev.actor}`,
         detail: ev.reason || ev.update_id,
         device: ev.device,
@@ -607,6 +829,7 @@ export function reduce(prev: DashState, ev: Ev): DashState {
         driftDevices,
         round: Math.max(s.round ?? 0, ev.round),
         phase: s.phase === "finished" ? "finished" : "waiting",
+        roundPhase: { round: ev.round, phase: "done", waitingFor: [], t: ev.t, explicit: false },
       };
     }
 
@@ -618,7 +841,14 @@ export function reduce(prev: DashState, ev: Ev): DashState {
         id: ev.seq,
         t: ev.t,
         severity: ev.severity,
-        source: ev.source === "finsentinel" ? "FinSentinel" : ev.source === "attack" ? "Attack" : "Coordinator",
+        source:
+          ev.source === "finsentinel"
+            ? "FinSentinel"
+            : ev.source === "attack"
+              ? "Attack"
+              : ev.source === "wazuh"
+                ? "Wazuh"
+                : "Coordinator",
         title: ev.title,
         detail: ev.detail,
         device: ev.device ?? null,
@@ -660,6 +890,7 @@ export function reduce(prev: DashState, ev: Ev): DashState {
         out = resolveFlight(out, idx, o, label, ev.t);
       }
       const name = SCENE_NAMES[ev.scene] ?? ev.scene;
+      out = pushNotable(out, { seq: ev.seq, t: ev.t, kind: "attack", round: s.round, device: ev.target ?? null, key: null, scene: ev.scene, outcome: ev.outcome ?? null, detail: ev.detail });
       return pushAlert(out, {
         id: ev.seq,
         t: ev.t,

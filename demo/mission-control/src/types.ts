@@ -104,7 +104,10 @@ export interface GateResultEv extends EvBase {
   reasons: string[];
   detail: string;
   source: "device" | "attack";
+  /** v2: who makes / made the decision. Absent in v1 recordings. */
+  decided_by?: DecidedBy;
 }
+export type DecidedBy = "wazuh" | "coordinator" | "human" | "pending";
 export interface ApprovalEv extends EvBase {
   type: "approval";
   device: string;
@@ -144,7 +147,7 @@ export interface AlertEv extends EvBase {
   title: string;
   detail: string;
   device?: string;
-  source: "finsentinel" | "coordinator" | "attack";
+  source: "finsentinel" | "coordinator" | "attack" | "wazuh";
   event_type?: string;
 }
 export interface AttackEv extends EvBase {
@@ -162,6 +165,36 @@ export interface RunFinishedEv extends EvBase {
   final_accuracy: number | null;
 }
 
+// ---------- v2: Wazuh decides ----------
+export interface DecisionEngineEv extends EvBase {
+  type: "decision_engine";
+  engine: "wazuh" | "coordinator";
+  detail: string;
+  wazuh_dashboard?: string;
+}
+export type RoundPhaseName = "open" | "deciding" | "aggregating";
+export interface RoundPhaseEv extends EvBase {
+  type: "round_phase";
+  round: number;
+  phase: RoundPhaseName;
+  waiting_for?: string[];
+}
+export type WazuhDecisionKind = "approve" | "quarantine" | "reject" | "suspend_device" | "alert";
+export interface WazuhDecisionEv extends EvBase {
+  type: "wazuh_decision";
+  device: string;
+  update_id: string | null;
+  round: number | null;
+  decision: WazuhDecisionKind;
+  rule_id: string;
+  rule_level: number;
+  rule_description: string;
+  event_type: string;
+  enforced: boolean;
+  enforcement_detail: string;
+  latency_ms: number | null;
+}
+
 export type Ev =
   | RunStartedEv
   | ComponentEv
@@ -177,7 +210,10 @@ export type Ev =
   | GlobalEvalEv
   | AlertEv
   | AttackEv
-  | RunFinishedEv;
+  | RunFinishedEv
+  | DecisionEngineEv
+  | RoundPhaseEv
+  | WazuhDecisionEv;
 
 export interface AppConfig {
   mode: "live" | "replay";
@@ -187,6 +223,41 @@ export interface AppConfig {
   replay_url: string;
   finsentinel_ui: string;
   femnist_url: string;
+}
+
+// ---------- v2: Security Console REST API (GET /fl/admin/console) ----------
+export interface ConsoleUpdateRow {
+  update_id: string;
+  device: string;
+  round: number | null;
+  http_status: number | null;
+  finsentinel_status: string | null;
+  risk_score: number | null;
+  severity: string | null;
+  reasons: string[];
+  decision: string | null;
+  decided_by: string | null;
+  rule_id: string | null;
+  t: number | null;
+}
+export interface ConsolePending {
+  update_id: string;
+  client_id: string;
+  round_number: number | null;
+  risk_score: number | null;
+  risk_severity: string | null;
+  anomaly_reasons: string[];
+  status: string | null;
+  raw: Record<string, unknown>;
+}
+export interface ConsoleApi {
+  decision_engine: "wazuh" | "coordinator" | string;
+  wazuh: { up: boolean; decisions: number | null; last_decision_t: number | null; dashboard_url: string | null } | null;
+  finsentinel: Record<string, unknown> | null;
+  pending: ConsolePending[];
+  suspended: { device: string; rule_id: string | null; since_round: number | null }[];
+  thresholds: Record<string, unknown> | null;
+  updates: ConsoleUpdateRow[];
 }
 
 export interface FemnistData {

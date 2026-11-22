@@ -55,3 +55,27 @@ export async function postAdmin(
     return { ok: false, status: 0, text: e instanceof Error ? e.message : String(e) };
   }
 }
+
+export async function getAdmin(
+  cfg: AppConfig,
+  path: string,
+  signal?: AbortSignal,
+): Promise<{ ok: boolean; status: number; json: unknown; text: string }> {
+  try {
+    const r = await fetch(`${cfg.http_url.replace(/\/$/, "")}${path}`, {
+      headers: { Authorization: `Bearer ${cfg.admin_token}` },
+      cache: "no-store",
+      signal,
+    });
+    const text = await r.text();
+    let json: unknown = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      /* not JSON */
+    }
+    return { ok: r.ok, status: r.status, json, text };
+  } catch (e) {
+    return { ok: false, status: 0, json: null, text: e instanceof Error ? e.message : String(e) };
+  }
+}

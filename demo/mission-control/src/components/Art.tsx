@@ -3,12 +3,12 @@
 export type Tone = "idle" | "busy" | "ok" | "warn" | "bad" | "off";
 
 const TONE_FILL: Record<Tone, string> = {
-  idle: "#1e3a5f",
-  busy: "#0ea5e9",
-  ok: "#16a34a",
-  warn: "#d97706",
-  bad: "#dc2626",
-  off: "#1f2937",
+  idle: "#1b2a44",
+  busy: "#2b6f96",
+  ok: "#1f8a68",
+  warn: "#a8791a",
+  bad: "#b93b3b",
+  off: "#1a2231",
 };
 
 export function PhoneArt({ tone, busy }: { tone: Tone; busy?: boolean }) {
@@ -68,7 +68,7 @@ export function Battery({ pct }: { pct: number | null }) {
   );
 }
 
-export function SignalBars({ bars, dbm }: { bars: number; dbm: number | null }) {
+export function SignalBars({ bars, dbm, compact }: { bars: number; dbm: number | null; compact?: boolean }) {
   return (
     <span className="signal" title={dbm == null ? "No signal reading yet" : `${dbm} dBm`}>
       <svg viewBox="0 0 22 16" aria-hidden>
@@ -84,7 +84,7 @@ export function SignalBars({ bars, dbm }: { bars: number; dbm: number | null }) 
           />
         ))}
       </svg>
-      <span>{dbm == null ? "—" : `${dbm}`}</span>
+      {!compact && <span>{dbm == null ? "—" : `${dbm}`}</span>}
     </span>
   );
 }
@@ -109,8 +109,8 @@ export function Sparkline({ values, width = 120, height = 30 }: { values: number
   const last = pts[pts.length - 1];
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="spark" aria-hidden>
-      <path d={d} fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinejoin="round" />
-      <circle cx={last[0]} cy={last[1]} r="3" fill="#38bdf8" />
+      <path d={d} fill="none" stroke="#7dd3fc" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx={last[0]} cy={last[1]} r="3" fill="#7dd3fc" />
     </svg>
   );
 }

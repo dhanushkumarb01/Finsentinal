@@ -378,14 +378,14 @@ describe("reducer — full sample recording", () => {
     expect(s.deviceOrder).toHaveLength(9);
     expect(s.deviceOrder.filter((id) => s.devices[id].info.kind === "wokwi")).toHaveLength(3);
     expect(s.phase).toBe("finished");
-    expect(Object.keys(s.evals)).toHaveLength(3);
+    expect(Object.keys(s.evals)).toHaveLength(5); // round 0 (initial model) + 4 rounds
     const gates = Object.values(s.gates);
     expect(gates.some((g) => g.ev.http_status === 409 && g.ev.checks.replay === "fail")).toBe(true);
     expect(gates.some((g) => g.ev.http_status === 422 && g.ev.checks.untampered === "fail")).toBe(true);
     expect(gates.some((g) => verdictOf(g).kind === "quarantined" && g.ev.device === "phone-03")).toBe(true);
     expect(s.devices["phone-04"].statesByRound[2]).toContain("skipped");
     expect(s.devices["phone-04"].reason).toBe("low_battery");
-    expect(s.driftDropRounds).toEqual([3]);
+    expect(s.driftDropRounds).toEqual([3, 4]);
     expect(s.alerts.some((a) => a.source === "Drift monitor")).toBe(true);
     // the MEDIUM update was approved by a human in round 3 → nothing left waiting
     expect(pendingReview(s)).toHaveLength(0);
@@ -394,7 +394,7 @@ describe("reducer — full sample recording", () => {
   });
 
   it("mid-run the MEDIUM update is waiting for review", () => {
-    const mid = events.findIndex((e) => e.type === "approval" && e.actor.startsWith("operator"));
+    const mid = events.findIndex((e) => e.type === "approval" && e.actor.startsWith("presenter"));
     const m = reduceAll(initialState(), events.slice(0, mid));
     expect(pendingReview(m).map((g) => g.ev.device)).toEqual(["esp32-02"]);
   });

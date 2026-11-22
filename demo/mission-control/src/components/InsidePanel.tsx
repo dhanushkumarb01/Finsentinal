@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { DashState } from "../state/reducer";
-import { signalBars, verdictOf } from "../state/reducer";
+import { deciderOf, fmtRisk, signalBars, verdictOf } from "../state/reducer";
 import { roundsOf, stateWords, stepsFor } from "../state/derive";
 import { ACTIVITY_NAMES, GATE_ORDER } from "../types";
 import { Battery, Esp32Art, PhoneArt, SignalBars } from "./Art";
-import { GATE_LABELS } from "./Gate";
+import { GATE_LABELS } from "./live/GateStage";
+import { DECISION_WORDS } from "./live/WazuhStage";
 
 function ClassBars({ counts }: { counts: number[] | null }) {
   if (!counts) return <div className="empty small">No training report yet for this round.</div>;
@@ -17,7 +18,7 @@ function ClassBars({ counts }: { counts: number[] | null }) {
         const x = 12 + i * 68;
         return (
           <g key={name}>
-            <rect x={x} y={160 - h} width="50" height={h} rx="3" fill="#38bdf8" opacity="0.85" />
+            <rect x={x} y={160 - h} width="50" height={h} rx="4" fill="#7dd3fc" opacity="0.85" />
             <text x={x + 25} y={154 - h} textAnchor="middle" className="svg-val">
               {v}
             </text>
@@ -55,10 +56,10 @@ function LossCurve({ pts }: { pts: { round: number; loss: number }[] }) {
       <text x={L - 6} y={H - B} textAnchor="end" className="svg-axis">
         0
       </text>
-      <path d={d} fill="none" stroke="#f472b6" strokeWidth="3" />
+      <path d={d} fill="none" stroke="#7dd3fc" strokeWidth="3" />
       {pts.map((p) => (
         <g key={p.round}>
-          <circle cx={x(p.round)} cy={y(p.loss)} r="4.5" fill="#f472b6" />
+          <circle cx={x(p.round)} cy={y(p.loss)} r="4.5" fill="#7dd3fc" />
           <text x={x(p.round)} y={y(p.loss) - 9} textAnchor="middle" className="svg-val">
             {p.loss.toFixed(2)}
           </text>
@@ -114,6 +115,7 @@ export function InsidePanel({ s, id, onClose }: { s: DashState; id: string; onCl
   const gateId = round != null ? d.gateByRound[round] : undefined;
   const gate = gateId ? s.gates[gateId] : d.lastGateId ? s.gates[d.lastGateId] : undefined;
   const v = gate ? verdictOf(gate) : null;
+  const wz = gate && gate.ev.source !== "attack" ? s.wazuhByUpdate[gate.ev.update_id] ?? null : null;
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -132,7 +134,8 @@ export function InsidePanel({ s, id, onClose }: { s: DashState; id: string; onCl
               <Battery pct={d.battery} />
               <SignalBars bars={signalBars(d.signal_dbm)} dbm={d.signal_dbm} />
               <span>{stateWords(d)}</span>
-              {d.hacked && <span className="tag tag-bad">HACKED</span>}
+              {d.hacked && <span className="flag flag-bad">Hacked</span>}
+              {d.suspended && <span className="flag flag-bad">Suspended{d.suspendedRule ? ` · rule ${d.suspendedRule}` : ""}</span>}
             </div>
           </div>
           <div className="round-pick">
@@ -178,7 +181,7 @@ export function InsidePanel({ s, id, onClose }: { s: DashState; id: string; onCl
           </div>
           <div className="inside-box">
             <h3>
-              Last gate checks {gate ? <span className="muted">· round {gate.ev.round}</span> : null}
+              Security checks {gate ? <span className="muted">· round {gate.ev.round}</span> : null}
             </h3>
             {!gate ? (
               <div className="empty small">No gate result for this device yet.</div>
@@ -194,10 +197,16 @@ export function InsidePanel({ s, id, onClose }: { s: DashState; id: string; onCl
                 <div className={`verdict v-${v?.kind}`}>{v?.text}</div>
                 <div className="muted small">
                   HTTP {gate.ev.http_status}
-                  {gate.ev.risk_score != null && ` · risk ${gate.ev.risk_score.toFixed(2)}`}
+                  {gate.ev.risk_score != null && ` · risk ${fmtRisk(gate.ev.risk_score)}`}
                   {gate.ev.severity && ` · ${gate.ev.severity}`}
-                  {gate.actor && ` · decided by ${gate.actor}`}
+                  {` · decided by ${gate.actor ?? deciderOf(gate, s)}`}
                 </div>
+                {wz && (
+                  <div className={`inside-wz ${DECISION_WORDS[wz.decision].cls}`}>
+                    <b>Wazuh: {DECISION_WORDS[wz.decision].word}</b> · rule {wz.rule_id} (level {wz.rule_level})
+                    <div className="small">{wz.rule_description}</div>
+                  </div>
+                )}
                 {gate.ev.reasons.length > 0 && <div className="small">{gate.ev.reasons.join("; ")}</div>}
               </div>
             )}

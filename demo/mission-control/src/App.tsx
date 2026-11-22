@@ -4,9 +4,10 @@ import { initialState, rootReducer } from "./state/reducer";
 import { DEFAULT_CONFIG, loadConfig } from "./config";
 import { LiveClient, type ConnStatus } from "./live/socket";
 import { parseJsonl, ReplayEngine, type ReplayProgress } from "./replay/engine";
-import { Dashboard } from "./components/Dashboard";
-import type { Mode } from "./components/Header";
+import { MissionControl } from "./components/MissionControl";
+import type { Mode } from "./components/TopNav";
 import { ReplayBar } from "./components/ReplayBar";
+import { useConsolePoll } from "./console/useConsole";
 
 interface Toast {
   id: number;
@@ -31,12 +32,15 @@ export default function App() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const engineRef = useRef<ReplayEngine | null>(null);
   const toastId = useRef(0);
+  const poll = useConsolePoll(cfg, mode === "live");
 
   useEffect(() => {
     loadConfig().then(({ config }) => {
       setCfg(config);
       setMode(config.mode);
-      setReplaySrc({ kind: "url", url: config.replay_url });
+      // Rehearsal helper: ?replay=<url> plays a different recording (e.g. a v1 run).
+      const q = new URLSearchParams(window.location.search).get("replay");
+      setReplaySrc({ kind: "url", url: q || config.replay_url });
     });
   }, []);
 
@@ -119,7 +123,7 @@ export default function App() {
     mode === "live" && conn !== "open" ? (
       <div className={`banner ${conn === "lost" ? "banner-bad" : "banner-warn"}`}>
         {conn === "lost"
-          ? `Connection lost to ${cfg.ws_url} — reconnecting (attempt ${attempt})…`
+          ? `Connection lost to ${cfg.ws_url} — reconnecting (attempt ${attempt})… The screen keeps the last known state.`
           : `Connecting to ${cfg.ws_url}…`}
       </div>
     ) : null;
@@ -146,8 +150,9 @@ export default function App() {
 
   return (
     <>
-      <Dashboard
+      <MissionControl
         s={state}
+        poll={poll}
         cfg={cfg}
         mode={mode}
         conn={mode === "replay" ? "replay" : conn}
