@@ -1,0 +1,51 @@
+# MVP study — spec Part 8 ("Exact experiment matrix").
+# 7 conditions x 5 method-variants x 5 seeds x 2 drift definitions = 350 runs.
+# Every value below reaches the simulator through src/experiments/config.py;
+# nothing is set in source code. See docs/EXPERIMENTS.md for the rationale of
+# each operating-point choice the spec leaves open (marked "chosen").
+study: mvp
+expected_total_runs: 350
+
+data:
+  dataset: femnist            # flwrlabs/femnist, natural writer partition (spec: no extra Dirichlet split)
+  n_clients: 100              # spec
+  n_reserve: 30               # drift-source writers, disjoint from clients (one per drifting client)
+  reserve_seed_offset: 10000  # reserve-pool seed = seed + offset (one top-level seed controls everything)
+
+drift:
+  mode: label_shift           # real-writer substitution (rotation is the confounded legacy mode)
+  fraction: 0.3               # spec: ~30% of clients
+  start_round: 20             # chosen: one injection event after a 19-round pre-drift phase
+  ramp_rounds: 10             # chosen: severity ramps linearly to 1.0 over 10 rounds
+
+training:
+  rounds: 100                 # spec
+  local_epochs: 1             # spec
+  lr: 0.03                    # chosen (Day-5 operating point; SGD momentum 0.9) — confirmed by pilot
+  batch_size: 10              # LEAF FEMNIST reference batch size; used since Day 1
+  eval_every: 5               # spec
+
+participation:
+  target_rate: 0.3            # spec: matched marginal dropout rate p
+  gamma: 2.0                  # MAR covariate coefficient (Day-3 calibration)
+  threshold_exclude_frac: 0.2 # unused in the MVP grid (threshold family is strong-paper tier)
+  model_relative_ema_decay: 0.7
+
+conditions:                   # spec: MCAR + MAR + MNAR-logistic at 5 beta levels
+  - {mechanism: mcar}
+  - {mechanism: mar}
+  - {mechanism: mnar, beta: 0.5}
+  - {mechanism: mnar, beta: 1}
+  - {mechanism: mnar, beta: 2}
+  - {mechanism: mnar, beta: 4}
+  - {mechanism: mnar, beta: 8}
+
+methods:
+  - {name: fedavg}
+  - {name: fedipw_oracle}
+  - {name: fedipw_estimated}
+  - {name: flfdms}
+  - {name: feddrift, kwargs: {delta: 0.04, max_models: 10}}   # delta=0.04 selected on held-out seed 100 (max Youden J; results/pilot_calibration/delta_calibration.json)
+
+seeds: [0, 1, 2, 3, 4]
+drift_estimators: [model_relative, model_independent]   # spec: primary + required robustness pass

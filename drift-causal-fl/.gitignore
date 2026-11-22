@@ -1,0 +1,11 @@
+# Sweep resume state: large (50-500 MB), transient, regenerated on resume
+results/**/checkpoint.pt
+results/**/lock
+results/mvp/_slots/
+
+# Local caches and environments
+data_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/

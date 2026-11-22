@@ -1,0 +1,291 @@
+{
+  "config": {
+    "num_classes": 62,
+    "mechanism": "mnar",
+    "target_rate": 0.3,
+    "rounds": 15,
+    "method": "fedavg",
+    "drift_estimator": "model_independent",
+    "beta": 4.0,
+    "gamma": 2.0,
+    "threshold_exclude_frac": 0.2,
+    "model_relative_ema_decay": 0.7,
+    "local_epochs": 1,
+    "lr": 0.03,
+    "batch_size": 10,
+    "eval_every": 5,
+    "seed": 0,
+    "eval_seed": 0,
+    "n_clients": 20,
+    "drift_mode": "label_shift",
+    "n_drift_cohort": 6,
+    "ramp_rounds": 4
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "acc_global": 0.05295566502463054,
+      "acc_drift_cohort": 0.04888888888888889,
+      "acc_stable_cohort": 0.054514480408858604,
+      "acc_client_mean": 0.06013196845413347,
+      "acc_client_std": 0.0475620073513822,
+      "acc_worst_client": 0.0,
+      "acc_clean": 0.05295566502463054,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 17,
+      "expected_dropout_rate": 0.29999999999999993,
+      "realized_dropout_rate": 0.15000000000000002,
+      "realized_rho": 0.0,
+      "realized_rho_true": 0.0,
+      "corr_Dmodel_Dtrue": null,
+      "corr_Dindep_Dtrue": null,
+      "n_drifting_total": 0,
+      "n_drifting_participated": 0,
+      "elapsed_sec": 32.3
+    },
+    {
+      "round": 5,
+      "acc_global": 0.06773399014778325,
+      "acc_drift_cohort": 0.07111111111111111,
+      "acc_stable_cohort": 0.06643952299829642,
+      "acc_client_mean": 0.07095968796154628,
+      "acc_client_std": 0.043463631281263244,
+      "acc_worst_client": 0.0,
+      "acc_clean": 0.06527093596059114,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 15,
+      "expected_dropout_rate": 0.3,
+      "realized_dropout_rate": 0.25,
+      "realized_rho": 0.5416380209312761,
+      "realized_rho_true": 0.3779644730092271,
+      "corr_Dmodel_Dtrue": -0.17161954352611541,
+      "corr_Dindep_Dtrue": 0.6319016622112711,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 3,
+      "elapsed_sec": 150.3
+    },
+    {
+      "round": 10,
+      "acc_global": 0.1834975369458128,
+      "acc_drift_cohort": 0.18666666666666668,
+      "acc_stable_cohort": 0.18228279386712096,
+      "acc_client_mean": 0.18275972246463876,
+      "acc_client_std": 0.0836580690304348,
+      "acc_worst_client": 0.05263157894736842,
+      "acc_clean": 0.18719211822660098,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 14,
+      "expected_dropout_rate": 0.29999999999999993,
+      "realized_dropout_rate": 0.30000000000000004,
+      "realized_rho": 0.10699703409970154,
+      "realized_rho_true": 0.5238095238095238,
+      "corr_Dmodel_Dtrue": -0.015566466597879209,
+      "corr_Dindep_Dtrue": 0.6454362570231638,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 2,
+      "elapsed_sec": 273.5
+    },
+    {
+      "round": 15,
+      "acc_global": 0.5283251231527094,
+      "acc_drift_cohort": 0.5644444444444444,
+      "acc_stable_cohort": 0.514480408858603,
+      "acc_client_mean": 0.5185861751096937,
+      "acc_client_std": 0.13450559137738713,
+      "acc_worst_client": 0.21212121212121213,
+      "acc_clean": 0.48891625615763545,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 12,
+      "expected_dropout_rate": 0.3,
+      "realized_dropout_rate": 0.4,
+      "realized_rho": 0.40325903361111354,
+      "realized_rho_true": 0.3563483225498994,
+      "corr_Dmodel_Dtrue": -0.11229137609056054,
+      "corr_Dindep_Dtrue": 0.6318937535502701,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 2,
+      "elapsed_sec": 930.1
+    }
+  ],
+  "summary": {
+    "final_acc_global": 0.5283251231527094,
+    "final_acc_drift_cohort": 0.5644444444444444,
+    "final_acc_stable_cohort": 0.514480408858603,
+    "final_acc_worst_client": 0.21212121212121213,
+    "final_acc_client_std": 0.13450559137738713,
+    "final_acc_clean": 0.48891625615763545,
+    "mean_expected_dropout_rate": 0.2999999999999999,
+    "mean_realized_dropout_rate": 0.29000000000000004,
+    "near_exclusion_frac": 0.08,
+    "participation_freq_std": 0.232163735324878,
+    "mean_corr_Dmodel_Dtrue": -0.10227150719596705,
+    "mean_corr_Dindep_Dtrue": 0.6389512238770217,
+    "wall_clock_sec": 930.2
+  },
+  "per_client_final": [
+    {
+      "client_id": 0,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 33,
+      "accuracy": 0.45454545454545453,
+      "participation_freq": 0.3333333333333333
+    },
+    {
+      "client_id": 1,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 23,
+      "accuracy": 0.30434782608695654,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 2,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 64,
+      "accuracy": 0.515625,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 3,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 29,
+      "accuracy": 0.5517241379310345,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 4,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 19,
+      "accuracy": 0.42105263157894735,
+      "participation_freq": 0.5333333333333333
+    },
+    {
+      "client_id": 5,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 35,
+      "accuracy": 0.5142857142857142,
+      "participation_freq": 0.26666666666666666
+    },
+    {
+      "client_id": 6,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 30,
+      "accuracy": 0.6,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 7,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 34,
+      "accuracy": 0.38235294117647056,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 8,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 36,
+      "accuracy": 0.75,
+      "participation_freq": 0.13333333333333333
+    },
+    {
+      "client_id": 9,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 33,
+      "accuracy": 0.21212121212121213,
+      "participation_freq": 0.6666666666666666
+    },
+    {
+      "client_id": 10,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 70,
+      "accuracy": 0.5571428571428572,
+      "participation_freq": 0.6
+    },
+    {
+      "client_id": 11,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 36,
+      "accuracy": 0.4722222222222222,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 12,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 32,
+      "accuracy": 0.625,
+      "participation_freq": 0.5333333333333333
+    },
+    {
+      "client_id": 13,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 72,
+      "accuracy": 0.5416666666666666,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 14,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 32,
+      "accuracy": 0.78125,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 15,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 69,
+      "accuracy": 0.5507246376811594,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 16,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 34,
+      "accuracy": 0.47058823529411764,
+      "participation_freq": 0.7333333333333333
+    },
+    {
+      "client_id": 17,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 33,
+      "accuracy": 0.42424242424242425,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 18,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 36,
+      "accuracy": 0.6944444444444444,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 19,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 62,
+      "accuracy": 0.5483870967741935,
+      "participation_freq": 0.8666666666666667
+    }
+  ]
+}

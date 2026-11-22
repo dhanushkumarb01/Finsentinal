@@ -106,7 +106,8 @@ def main() -> None:
             corrs.append(realized_correlation(D, participates))
         mean_rate, mean_rho = np.mean(rates), np.mean(corrs)
         rhos.append(mean_rho)
-        print(f"  beta={beta:>4.1f}:  realized dropout rate = {mean_rate:.4f}  |  realized rho(D, dropout) = {mean_rho:+.4f}")
+        # expected rate = mean(p_miss): the calibrated quantity itself, free of Bernoulli sampling noise
+        print(f"  beta={beta:>4.1f}:  expected dropout rate = {p_miss.mean():.4f}  realized = {mean_rate:.4f}  |  realized rho(D, dropout) = {mean_rho:+.4f}")
 
     print("\n--- Check 2: does rho climb monotonically with beta? ---")
     increasing = all(rhos[i] <= rhos[i + 1] + 1e-6 for i in range(len(rhos) - 1))
@@ -114,10 +115,14 @@ def main() -> None:
     print(f"Monotonically non-decreasing: {'YES' if increasing else 'NO — investigate'}")
 
     print("\n--- Threshold mechanism (robustness check) ---")
-    participates = mnar_threshold_dropout(D, TARGET_RATE, base_rate=0.05, rng=rng)
-    rate = 1 - participates.mean()
-    rho = realized_correlation(D, participates)
-    print(f"threshold: realized dropout rate = {rate:.4f}  |  realized rho(D, dropout) = {rho:+.4f}")
+    # exclude_frac = deterministic top-drift share; p_base is calibrated so the
+    # combined expected rate equals TARGET_RATE exactly (spec Part 2).
+    rates, corrs = [], []
+    for s in range(N_SEEDS):
+        participates, p_miss = mnar_threshold_dropout(D, TARGET_RATE, exclude_frac=0.2, rng=np.random.default_rng(4000 + s))
+        rates.append(1 - participates.mean())
+        corrs.append(realized_correlation(D, participates))
+    print(f"threshold (exclude_frac=0.2): expected dropout rate = {p_miss.mean():.4f}  realized = {np.mean(rates):.4f}  |  realized rho(D, dropout) = {np.mean(corrs):+.4f}")
 
     print("=" * 70)
     print("PASS conditions: (1) all realized rates land near", TARGET_RATE, "(2) rho climbs with beta (3) rho stays 0 for MCAR/MAR, clearly nonzero for MNAR/threshold.")

@@ -1,0 +1,117 @@
+[sweep] 100 runs, 4 workers x 1 threads -> C:\Users\Dhanush\drift-causal-fl\drift-causal-fl\results\smoke
+[w0] s0__mrel__mcar__fedavg: done in 674s
+[w1] s0__mrel__mcar__fedipw_oracle: done in 673s
+[w2] s0__mrel__mcar__fedipw_estimated: done in 674s
+[w3] s0__mrel__mcar__flfdms: done in 683s
+[w2] s0__mrel__mar__fedipw_oracle: done in 413s
+[w1] s0__mrel__mar__fedavg: done in 416s
+[w3] s0__mrel__mar__fedipw_estimated: done in 407s
+[w0] s0__mrel__mcar__feddrift: done in 725s
+[w3] s0__mrel__mnar_b1__fedavg: done in 560s
+[w2] s0__mrel__mar__flfdms: done in 607s
+[w0] s0__mrel__mnar_b1__fedipw_oracle: done in 496s
+[w1] s0__mrel__mar__feddrift: done in 865s
+[w3] s0__mrel__mnar_b1__fedipw_estimated: done in 442s
+[w2] s0__mrel__mnar_b1__flfdms: done in 415s
+[w1] s0__mrel__mnar_b4__fedavg: done in 1308s
+[w3] s0__mrel__mnar_b4__fedipw_oracle: done in 1291s
+[w2] s0__mrel__mnar_b4__fedipw_estimated: done in 1289s
+[w0] s0__mrel__mnar_b1__feddrift: done in 1539s
+[w1] s0__mrel__mnar_b4__flfdms: done in 396s
+[w2] s0__mrel__mnar_b8__fedavg: done in 361s
+[w0] s0__mrel__mnar_b8__fedipw_oracle: done in 379s
+[w3] s0__mrel__mnar_b4__feddrift: done in 635s
+[w1] s0__mrel__mnar_b8__fedipw_estimated: done in 390s
+[w2] s0__mrel__mnar_b8__flfdms: done in 397s
+[w0] s0__mrel__mnar_b8__feddrift: done in 603s
+[w3] s0__mind__mnar_b1__fedavg: done in 427s
+[w1] s0__mind__mnar_b1__fedipw_oracle: done in 416s
+[w2] s0__mind__mnar_b1__fedipw_estimated: done in 433s
+[w0] s0__mind__mnar_b1__flfdms: done in 966s
+[w1] s0__mind__mnar_b4__fedavg: done in 936s
+[w3] s0__mind__mnar_b1__feddrift: done in 1058s
+[w2] s0__mind__mnar_b4__fedipw_oracle: done in 927s
+[w0] s0__mind__mnar_b4__fedipw_estimated: done in 376s
+[w1] s0__mind__mnar_b4__flfdms: done in 386s
+[w2] s0__mind__mnar_b8__fedavg: done in 371s
+[w0] s0__mind__mnar_b8__fedipw_oracle: done in 379s
+[w1] s0__mind__mnar_b8__fedipw_estimated: done in 379s
+[w3] s0__mind__mnar_b4__feddrift: done in 694s
+[w2] s0__mind__mnar_b8__flfdms: done in 396s
+[w1] s1__mrel__mcar__fedavg: done in 458s
+[w3] s1__mrel__mcar__fedipw_oracle: done in 457s
+[w2] s1__mrel__mcar__fedipw_estimated: done in 453s
+[w0] s0__mind__mnar_b8__feddrift: done in 631s
+[w1] s1__mrel__mcar__flfdms: done in 436s
+[w2] s1__mrel__mar__fedavg: done in 414s
+[w0] s1__mrel__mar__fedipw_oracle: done in 415s
+[w3] s1__mrel__mcar__feddrift: done in 600s
+[w1] s1__mrel__mar__fedipw_estimated: done in 433s
+[w2] s1__mrel__mar__flfdms: done in 447s
+[w3] s1__mrel__mnar_b1__fedavg: done in 437s
+[w0] s1__mrel__mar__feddrift: done in 2629s
+[w1] s1__mrel__mnar_b1__fedipw_oracle: done in 26603s
+[w2] s1__mrel__mnar_b1__fedipw_estimated: done in 26643s
+[w3] s1__mrel__mnar_b1__flfdms: done in 26675s
+[w1] s1__mrel__mnar_b4__fedavg: done in 471s
+[w0] s1__mrel__mnar_b1__feddrift: done in 24797s
+[w2] s1__mrel__mnar_b4__fedipw_oracle: done in 450s
+[w3] s1__mrel__mnar_b4__fedipw_estimated: done in 443s
+[w1] s1__mrel__mnar_b4__flfdms: done in 440s
+[w2] s1__mrel__mnar_b8__fedavg: done in 444s
+[w0] s1__mrel__mnar_b4__feddrift: done in 544s
+[w3] s1__mrel__mnar_b8__fedipw_oracle: done in 443s
+[w1] s1__mrel__mnar_b8__fedipw_estimated: done in 557s
+[w2] s1__mrel__mnar_b8__flfdms: done in 554s
+[w0] s1__mrel__mnar_b8__feddrift: done in 620s
+[w3] s1__mind__mnar_b1__fedavg: done in 551s
+[w1] s1__mind__mnar_b1__fedipw_oracle: done in 392s
+[w2] s1__mind__mnar_b1__fedipw_estimated: done in 354s
+[w0] s1__mind__mnar_b1__flfdms: done in 345s
+[w3] s1__mind__mnar_b1__feddrift: done in 381s
+[w1] s1__mind__mnar_b4__fedavg: done in 320s
+[w2] s1__mind__mnar_b4__fedipw_oracle: done in 319s
+[w0] s1__mind__mnar_b4__fedipw_estimated: done in 318s
+[w3] s1__mind__mnar_b4__flfdms: done in 325s
+[w2] s1__mind__mnar_b8__fedavg: done in 295s
+[w0] s1__mind__mnar_b8__fedipw_oracle: done in 295s
+[w3] s1__mind__mnar_b8__fedipw_estimated: done in 295s
+[w1] s1__mind__mnar_b4__feddrift: done in 557s
+[w2] s1__mind__mnar_b8__flfdms: done in 314s
+[w0] s1__mind__mnar_b8__feddrift: done in 355s
+[w3] s0__mind__mcar__fedavg: done in 287s
+[w1] s0__mind__mcar__fedipw_oracle: done in 283s
+[w2] s0__mind__mcar__fedipw_estimated: done in 277s
+[w0] s0__mind__mcar__flfdms: done in 272s
+[w1] s0__mind__mar__fedavg: done in 262s
+[w3] s0__mind__mcar__feddrift: done in 398s
+[w2] s0__mind__mar__fedipw_oracle: done in 255s
+[w0] s0__mind__mar__fedipw_estimated: done in 255s
+[w1] s0__mind__mar__flfdms: done in 271s
+[w2] s1__mind__mcar__fedavg: done in 322s
+[w3] s0__mind__mar__feddrift: done in 438s
+[w0] s1__mind__mcar__fedipw_oracle: done in 321s
+[w1] s1__mind__mcar__fedipw_estimated: done in 314s
+[w2] s1__mind__mcar__flfdms: done in 316s
+[w0] s1__mind__mar__fedavg: done in 324s
+[w1] s1__mind__mar__fedipw_oracle: done in 327s
+[w3] s1__mind__mcar__feddrift: done in 470s
+[w2] s1__mind__mar__fedipw_estimated: done in 327s
+[w0] s1__mind__mar__flfdms: done in 299s
+[w1] s1__mind__mar__feddrift: done in 412s
+{
+  "planned": 100,
+  "counts": {
+    "done": 100
+  },
+  "failed": [],
+  "interrupted": [],
+  "stale_lock": [],
+  "recovered_or_rerun": [],
+  "run_duration_sec": {
+    "n": 100,
+    "mean": 1541.205,
+    "total": 154120.5
+  },
+  "sweep_wall_clock_sec": 38711.4
+}

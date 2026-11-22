@@ -1,0 +1,16 @@
+{
+  "planned": 1,
+  "counts": {
+    "done": 1
+  },
+  "failed": [],
+  "interrupted": [],
+  "stale_lock": [],
+  "recovered_or_rerun": [],
+  "run_duration_sec": {
+    "n": 1,
+    "mean": 35766.0,
+    "total": 35766.0
+  },
+  "sweep_wall_clock_sec": 35774.0
+}

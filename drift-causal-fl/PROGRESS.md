@@ -1,86 +1,115 @@
 # PROGRESS — Drift-Causal Dropout Pipeline
 
-*Single source of truth for project status. Read this first before re-scanning files or re-deriving what's done — update it every session instead of re-deriving state from scratch.*
+*Single source of truth for project status. Read this first; update it every session.*
 
-**Last updated:** 2026-09-27 (Day 2 complete)
-**Working directory:** `/Users/akshitajain/prj4/drift-causal-fl/`
-**Parent research docs (in `/Users/akshitajain/prj4/`):** `research_discovery.md`, `full_research_report.md`, `candidate1_adversarial_audit.md`, `candidate1_final_hostile_validation.md`, `candidate1_project_specification.md` — the full research → validation → spec trail. Don't redo this work; it's locked.
+**Last updated:** 2026-11-19 (Steps 6–8 implemented and tested; smoke sweep + calibration pilot running; Step 9 sweep pending launch)
+**Working directory:** `drift-causal-fl/` (Windows 11, `.venv`, Python 3.11.9, torch 2.9.1+cpu)
+**Parent research docs (repo root):** `research_discovery.md`, `full_research_report.md`, `candidate1_adversarial_audit.md`, `candidate1_final_hostile_validation.md`, `candidate1_project_specification.md` — locked.
+**Implementation records:** `docs/METHODS.md` (FL-FDMS, FedDrift — every decision/deviation), `docs/EXPERIMENTS.md` (config, logging, checkpointing, commands, resource measurements).
 
 ---
 
 ## Project identity (locked, do not re-litigate)
 
 - **Title:** *When Absence Is Informative: Benchmarking Federated Learning Under Drift-Causal Client Participation*
-- **Research question:** Does client dropout that's causally driven by a device's own current, temporally-evolving data drift produce systematically different FL outcomes than exogenous dropout of equal marginal rate — and does an existing bias-correction method (FedIPW) remain valid under this regime?
-- **Novelty claim (narrow, already survived 3 rounds of hostile search):** No prior work studies participation driven by *temporal* concept drift specifically, or runs a matched-marginal-rate benchmark isolating informativeness from amount. Load-bearing prior art to cite: FLOSS (arXiv:2507.23115), FedIPW (arXiv:2604.26604), FL-FDMS (arXiv:2205.13222), DFL-AA (arXiv:2606.10774).
-- **Must-not-claim list, SAPA gate rule, falsification criteria, full hypotheses:** all in `candidate1_project_specification.md` — do not redo this reasoning, just reference it.
+- **Research question:** Does client dropout causally driven by a device's own current drift produce systematically different FL outcomes than exogenous dropout of equal marginal rate — and does FedIPW remain valid under this regime?
+- Must-not-claim list, hypotheses, falsification criteria: `candidate1_project_specification.md`.
 
 ---
 
-## Status checklist (Day 1–7 plan)
+## Status checklist
 
-| Day | Task | Status | Notes |
+| Step | Task | Status | Evidence |
 |---|---|---|---|
-| 1 | Trustworthy full-participation FedAvg baseline | ✅ **Done, verified working** | See Results below |
-| 2 | Drift injection engine (D(i,t) computation) | ✅ **Done, verified working** | Model-independent estimator works great (corr=0.995 with ground truth); model-relative estimator is noisy at small scale (corr=0.02) — see Results |
-| 3 | MCAR + MAR dropout mechanisms | ✅ **Done, verified working on real data** | `src/mechanisms/dropout.py` — rate-matching confirmed |
-| 4 | MNAR-logistic + threshold mechanisms, alpha-calibration | ✅ **Done, verified working on real data** | Same file — ρ climbs monotonically with β (0.07→0.70) on real drift scores |
-| — | **Integration: mechanism + drift + FedAvg assembled into one loop** | ✅ **Done** | `src/simulation/mechanism_runner.py` — the actual MVP loop |
-| — | **First real MCAR/MAR/MNAR head-to-head run** | ✅ **Done (single-seed, reduced scale)** | See Results — **this is the first real look at the headline question** |
-| 5 | FedIPW (oracle + estimated variants) | ✅ **Done, verified — and it caught a real bug in our experimental design** | See Results — found a drift-injection confound |
-| — | **Fix drift-injection confound (rotation → real cross-writer label shift)** | ✅ **Done, verified fixed** | Confirmed: MCAR/MNAR FedAvg accuracy converged after the fix (0.627 vs 0.621, was 0.52 vs 0.59) |
-| 6 | FL-FDMS | ❌ Not started | **← next task** |
-| 7 | FedDrift + first end-to-end smoke test | ❌ Not started | |
-| — | Full MVP sweep (175–350 runs, 5 seeds) | ❌ Not started | Blocked on Days 6, 7. Needed to confirm whether the oracle-IPW-under-MNAR pattern (Results) is real or single-seed noise |
-| — | Statistical analysis (mixed-effects regression, bootstrap CIs) | ❌ Not started | Needs the full multi-seed sweep first |
-
-**Bottom line: Days 1–5 all done and verified, fully assembled into one working loop. The core theoretical test (does FedIPW break under MNAR) has actually been run twice — once with a confounded drift mechanism (caught and diagnosed the confound), once with the fixed mechanism (confound confirmed resolved, a theory-consistent but not-yet-proven signal is emerging for oracle-IPW). Next: FL-FDMS (Day 6).**
+| 1 | Full-participation FedAvg baseline | ✅ verified | Day-1 v2 run (below) |
+| 2 | Drift injection + both estimators | ✅ verified | label-shift drift; corr(D_indep, D_true)≈0.75–0.80, corr(D_model, D_true)≈−0.06 at pilot scale |
+| 3–4 | MCAR / MAR / MNAR-logistic / MNAR-threshold, α calibration on the clipped probability | ✅ verified | `tests/test_steps1_5.py` (74 tests) |
+| 5 | FedIPW oracle + estimated, drift-aware evaluation | ✅ verified | Day-5 v3 sweeps COMPLETE (24/24 runs, `results/day5_v3/`) — see "Steps 1–5 verification" |
+| 6 | FL-FDMS | ✅ implemented + unit/integration tested | `src/methods/flfdms.py`, `docs/METHODS.md` |
+| 7 | FedDrift (multi-model) | ✅ implemented + unit/integration tested | `src/methods/feddrift.py`, `docs/METHODS.md` |
+| 8 | Experiment infrastructure | ✅ implemented + tested | `src/experiments/`, `configs/`, `scripts/run_sweep.py`; `docs/EXPERIMENTS.md` |
+| — | Smoke sweep (spec Day 7) | ✅ 100/100 done, 0 failed; analysis pipeline validated end to end | `results/smoke/`, `results/smoke/analysis/` |
+| — | Calibration pilot (lr stability, FedDrift δ) | ✅ done — δ = 0.04, lr 0.03 stable (final acc 0.825) | `results/pilot_calibration/delta_calibration.json` |
+| 9 | 350-run MVP sweep | ⏳ launched 2026-11-20 (4 workers × 1 thread, flfdms cap 1); measured ~110 s/round/worker → ~3 h/run → ETA ~11 days | `results/mvp/`, log `results/_logs/mvp_sweep.log` |
+| 10 | Statistical analysis | pipeline built + unit-tested; awaits sweep data | `analysis/`, `scripts/run_analysis.py` |
 
 ---
 
-## Environment (already set up, don't reinstall)
+## Steps 1–5 verification (2026-11-19)
 
-- Python 3.11.7 at `/Users/akshitajain/.pyenv/versions/3.11.7/bin/python3`
-- Installed: `torch 2.11.0`, `torchvision 0.26.0`, `flwr 1.37.0`, `flwr-datasets 0.6.1`, `numpy`, `pandas`, `scipy` (all confirmed installed)
-- **Real FEMNIST is already downloaded and cached locally** (via `flwr-datasets` → HuggingFace Hub, `flwrlabs/femnist`, 814,277 samples, fields: `image`, `writer_id`, `hsf_id`, `character`, 62 classes). No need to re-download — `src/data/loaders.py::load_femnist_clients()` will hit the local cache.
-- MNIST fallback path also exists (`load_mnist_smoketest_clients()`) but is **not needed anymore** since real FEMNIST works — don't bother running it again.
+- Full test suite at session start: **74/74 passed** (`tests/test_steps1_5.py`).
+- Day-5 v3 sweeps (25 clients, 25 rounds, seed 0, β=4, both estimators, MCAR/MAR/MNAR/MNAR-threshold × FedAvg/oracle/estimated) **completed: 24/24 JSONs + 2 summaries** in `results/day5_v3/`. The `.log` files are empty (stdout was not flushed when redirected); the JSONs are complete.
+- MCAR and MAR results are **bit-identical** between the two estimator passes (expected: neither mechanism reads D) — direct evidence the simulator is deterministic.
+- Oracle-IPW == FedAvg exactly under MCAR (0.6113) and under MNAR-threshold (constant propensity p_base among participants) — correctness checks hold.
+- corr(D_model, D_true) = −0.065, corr(D_indep, D_true) = 0.797: the model-relative estimator carries essentially no drift signal at this scale. Under model-relative MNAR, dropout is therefore informative about D_model but barely about true drift. This is a property of the estimator, to be re-measured at MVP scale (it is logged in every run).
+- No Step 1–5 blocker for Steps 6–10 was found. `PROGRESS.md` had not been updated for the Step-4/5 fixes (drift-aware evaluation, clipped-α calibration, shared positivity band, num_classes fix, held-out drift-source test split); those are documented in the module docstrings and are now reflected here.
 
----
+## FedDrift δ calibration (held-out seed 100, 2026-11-20)
 
-## File inventory (what exists, what it does)
+The pilot ran FedDrift with δ = 1e6, which is exactly FedAvg. It used the MVP
+operating point: 100 clients, 100 rounds, MCAR, model-relative estimator. It
+took 35,758 s, sharing the CPU with the smoke sweep.
 
-```
-drift-causal-fl/
-├── PROGRESS.md                          ← this file
-├── requirements.txt                     ✅ torch, torchvision, numpy, flwr, flwr-datasets
-├── src/
-│   ├── models/cnn.py                    ✅ SmallCNN — 2 conv + 2 FC, matches LEAF/FedDrift reference arch
-│   ├── data/loaders.py                  ✅ load_femnist_clients() [real, writer-partitioned], load_mnist_smoketest_clients() [unused fallback], load_clients() [tries FEMNIST, falls back to MNIST]
-│   ├── simulation/fedavg_baseline.py    ✅ local_train(), fedavg_aggregate(), evaluate(), run_fedavg_full_participation() — FULL PARTICIPATION ONLY, no dropout wired in yet
-│   ├── mechanisms/dropout.py            ✅ sigmoid(), mcar_dropout(), mar_dropout(), mnar_drift_dropout(), mnar_threshold_dropout(), _solve_alpha() [bisection calibration], realized_correlation() — validated against REAL drift data, see Results
-│   └── drift/
-│       ├── injection.py                 ✅ DriftSchedule, make_drift_schedule(), apply_drift_transform() — synthetic rotation-based drift, ramps up over rounds, tracks D_true (ground truth) separately from any estimator
-│       ├── model_relative.py            ✅ ModelRelativeDriftTracker — loss-under-lagged-model minus running EMA. WORKS BUT NOISY at small scale (see Results)
-│       └── model_independent.py         ✅ FrozenFeatureExtractor + ModelIndependentDriftTracker — frozen random CNN + mean-embedding distance from a reference window. WORKS WELL (see Results)
-│   ├── methods/fedipw.py                ✅ ipw_aggregate() [1/propensity-weighted FedAvg], EstimatedPropensityTracker [per-client EMA of own participation history, NEVER sees D — this is the "realistic" propensity estimate]
-│   └── simulation/mechanism_runner.py   ✅ run_mechanism_experiment() — the REAL, ASSEMBLED loop: drift injection + one dropout mechanism (mcar/mar/mnar) + one aggregation method (fedavg/fedipw_oracle/fedipw_estimated), per round, with the "algorithm never sees D for a round it didn't participate in" invariant enforced
-├── scripts/
-│   ├── run_day1_baseline.py             ✅ CLI runner for the Day-1 baseline, works
-│   ├── run_day2_drift_check.py          ✅ Validates both drift estimators against injected ground truth, works
-│   ├── run_day3_mechanism_check.py      ✅ Validates dropout mechanisms against REAL D values (rate-matching + rho-vs-beta), works
-│   ├── run_mvp_comparison.py            ✅ First real MCAR/MAR/MNAR head-to-head run (single seed, reduced scale) — see Results
-│   └── run_day5_fedipw_check.py         ✅ FedAvg vs FedIPW-oracle vs FedIPW-estimated, under MCAR vs MNAR — THE core theoretical test of the project — see Results
-├── results/
-│   ├── day1_femnist.json                First (small, quick) run: 15 clients, 15 rounds — flat ~4-5% accuracy, too small/short to learn
-│   ├── day1_femnist_v2.json             Second (tuned) run: 40 clients, 40 rounds — REAL LEARNING CONFIRMED, see below
-│   ├── day1_femnist_v2.log              Full console log of the v2 run
-│   ├── day2_drift_check.log             Day-2 drift estimator validation log — see Results below
-│   ├── day3_mechanism_check.log         Day-3/4 mechanism validation log (rate-matching + rho climbs with beta) — see Results below
-│   ├── mvp_{mcar,mar,mnar}.json         Per-mechanism round logs from the first head-to-head comparison
-│   └── mvp_comparison.log               Full console log + summary of the first head-to-head comparison
-```
+- **lr stability:** accuracy rises monotonically, without divergence: 0.154
+  (round 10) → 0.665 (20) → 0.754 (30) → 0.797 (50) → 0.825 (100). Drift-cohort
+  accuracy is 0.826 at the end. lr = 0.03 is kept.
+- **δ:** the drift-test statistic min_m l^t − min_m l^{t_prev} was scored on the
+  paper's grid {0.02, …, 0.20}:
+  - Positives: 311 drift-cohort client-rounds in rounds 20–34.
+  - Negatives: 3,947 stable client-rounds from round 20 on.
+  - Maximum Youden J is **0.149 at δ = 0.04** (TPR 0.244, FPR 0.096), so
+    **δ = 0.04** is selected by the pre-stated rule.
+- **Caveat (reported, not tuned away):** the paper's loss-jump test is a weak
+  detector under gradual label-shift drift with a 10-round ramp.
+  - Median statistic: −0.073 in the drift window and −0.012 on stable clients.
+    90th percentile: 0.116 in the drift window and 0.038 on stable clients.
+  - At δ = 0.04 this means about 4.7 spurious flags per round. The
+    `max_models = 10` cap therefore binds, and merging (also at δ) controls
+    the model count.
+  - This is a property of FedDrift in this regime, and it is logged per run
+    (`feddrift_*` diagnostics, `n_cap_blocked`).
 
-**Known gotcha already documented in the spec (Part 1):** any FL algorithm under test must only see drift score `D(i,t)` for rounds where the client actually participated — never leak the simulator's "god view" of D into an algorithm. Enforce this with a unit test when Day 2/5/6 code is written.
+## Smoke sweep result (2026-11-20)
+
+Setup: 20 clients, 15 rounds, 5 conditions × 5 methods × 2 seeds × 2
+estimators.
+
+- **Runs:** 100/100 completed, 0 failed, 0 interrupted. Mean run time 1,541 s;
+  wall clock 10.75 h, shared with the calibration pilot.
+- **Reproducibility:** all 20 MCAR/MAR duplicate cells are bit-identical
+  across the two estimator passes (max |diff| = 0).
+- **Analysis pipeline:** it ran end to end and produced 14 tables, 17 figures
+  and `results.json`.
+- **Fixes found by the smoke analysis:**
+  1. *Mixed-model failures.* With 2 seeds the seed-variance component sits at
+     its boundary (0). L-BFGS then hit a singular Hessian, and all 10 mixed
+     models failed. Now each optimizer is tried in turn (lbfgs → powell → nm
+     → bfgs), the optimizer used and any boundary fit are recorded, and a
+     reported OLS-with-seed-fixed-effects fallback runs only if every
+     optimizer fails. A likelihood-ratio test is computed only between models
+     of the same family. A regression test was added; the mixed models now
+     fit 10/10.
+  2. *Hard-coded figure label.* Figures said "round 100"; they now read the
+     final round from the data (new `final_round` column).
+  3. *FedDrift figure layout.* The clipped y-label and the legend overlapping
+     the bars were fixed.
+- **Not a bug:** `*_lastk` (mean of the last 3 eval points) looks low in the
+  smoke data because it averages rounds 5, 10 and 15. In the MVP it covers
+  rounds 90, 95 and 100.
+- **Smoke numbers are not evidence:** n = 2 seeds and 15 rounds, so the
+  likelihood-ratio tests are anti-conservative. FedDrift reached about 4–8
+  models within 15 rounds at δ = 0.04, consistent with the calibration's
+  false-positive rate.
+- **Tests:** full suite 172/172 passed (74 + 66 + 21 + 11); `ruff` clean.
+
+## Steps 6–8 summary (details: docs/METHODS.md, docs/EXPERIMENTS.md)
+
+- **Strategy refactor:** the round loop is method-agnostic; FedAvg/FedIPW are bit-identical to the pre-refactor loop (24/24 fixture combinations).
+- **FL-FDMS:** paper Eqs. 3/5/14/15 exactly (running arithmetic mean — the spec's "EMA" wording is inaccurate); documented decisions D1–D5.
+- **FedDrift:** paper Algorithm 4 (loss-based drift test, singleton clusters, complete-linkage merging with δ, size-weighted merge, per-cluster FedAvg), adapted to partial participation (F1–F9). Official code consulted only where the paper is silent.
+- **Infrastructure:** YAML configs with validation; one directory per run (spec, incremental JSONL metrics, full per-round trace, result, attempts, error); checkpoint every 10 rounds with bit-identical resume; O_EXCL locks with stale-lock reclaim; failures recorded and never silently retried.
+- **Tests:** 74 (Steps 1–5) + 66 (methods) + 21 (infrastructure) + 11 (analysis) = 172, all passing. `ruff` (F, E9) clean.
+- **Performance:** `SGD(foreach=True)` — bit-identical, ~32% faster. Flush-to-zero for subnormals in sweep workers. Memory (not CPU) is the binding constraint on this shared 16 GB machine.
 
 ---
 
@@ -184,27 +213,20 @@ New pieces: `load_femnist_reserve_pool()` (data/loaders.py), `apply_label_shift_
 
 ---
 
+---
+
 ## Exact next step
 
-The confound is fixed and confirmed. Next: Day 6 (FL-FDMS), Day 7 (FedDrift), then the full multi-seed MVP sweep — which is what's needed to know whether the oracle-IPW-under-MNAR pattern above is real or single-seed noise.
+1. ~~Calibration pilot~~ done. ~~Smoke sweep + analysis validation~~ done.
+2. MVP sweep **running**. Check progress with `python scripts/run_sweep.py --config configs/mvp.yaml --status`. If it is interrupted, rerun the same launch command (`--workers 4 --threads 1 --max-concurrent flfdms=1`); it resumes.
+3. `python scripts/run_analysis.py --study mvp` once complete.
 
 ---
 
-## Earlier next-step note (superseded by the above, kept for history)
-
-`src/mechanisms/dropout.py` (MCAR/MAR/MNAR/threshold) was written ahead of schedule but has never been run against real `D(i,t)` values — only reasoned about on paper. Now that Day 2 produces real D values:
-
-1. Run `mnar_drift_dropout()` against the real `D_indep` values from Day 2's run and confirm: does increasing `beta` actually produce increasing realized correlation `ρ` between drift and dropout, as designed? (Sanity check before trusting the mechanism.)
-2. Confirm the `_solve_alpha()` bisection actually holds the marginal dropout rate constant across different `beta` values on real (not synthetic) D distributions.
-3. Wire dropout into `src/simulation/fedavg_baseline.py` — right now it only supports full participation. Needs a per-round participation mask applied before aggregation.
-4. Only after that: Day 5 (FedIPW), Day 6 (FL-FDMS), Day 7 (FedDrift + first full smoke test).
-
----
-
-## How to rerun what already works
+## How to rerun what already works (legacy day scripts)
 
 ```bash
-cd /Users/akshitajain/prj4/drift-causal-fl
+cd drift-causal-fl
 
 # Day-1 baseline, real FEMNIST, tuned settings (reproduces the ~72% result)
 python3 scripts/run_day1_baseline.py --clients 40 --rounds 40 --local-epochs 2 --lr 0.05 --batch-size 10 --eval-every 4 --out results/day1_femnist_v3.json

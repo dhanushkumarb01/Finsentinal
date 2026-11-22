@@ -161,6 +161,52 @@ def apply_drift(
     raise ValueError(f"unknown drift mode: {schedule.mode}")
 
 
+def apply_drift_to_test(
+    client: "ClientData",  # noqa: F821
+    magnitude: float,
+    schedule: DriftSchedule,
+    round_num: int,
+    reserve_by_id: dict[int, "ClientData"] | None,  # noqa: F821
+    eval_seed: int = 0,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """The client's TEST set as it looks at `round_num` — the evaluation-side
+    counterpart of apply_drift (spec Part 1, target estimand (a)/(e): a
+    held-out test set that includes drift-injected examples proportionally).
+
+    label_shift: a `magnitude` fraction of the client's own held-out test
+    samples is replaced by samples from the drift-source writer's HELD-OUT
+    test split (never its train split, which feeds training-time drift) —
+    so no test sample was ever trained on by anyone.
+
+    Uses its own RNG, seeded deterministically from (eval_seed, client_id,
+    round): evaluation never consumes the training RNG stream (adding or
+    removing evaluation cannot change the training trajectory), and every
+    mechanism/method is scored on the IDENTICAL drifted test set for a given
+    round, so comparisons between runs are paired.
+    """
+    x, y = client.test_x, client.test_y
+    if magnitude <= 0 or len(y) == 0:
+        return x, y
+    rng = np.random.default_rng([int(eval_seed), int(client.client_id) % (2**31), int(round_num)])
+    if schedule.mode == "rotation":
+        return apply_drift_transform(x, magnitude, schedule.max_angle_deg), y
+    if schedule.mode != "label_shift":
+        raise ValueError(f"unknown drift mode: {schedule.mode}")
+    source = reserve_by_id[schedule.drift_source_id[client.client_id]]
+    if len(source.test_y) == 0:
+        raise ValueError(f"drift source {source.client_id} has no held-out test split — cannot build a leakage-free drifted test set")
+    n = len(y)
+    n_swap = int(round(magnitude * n))
+    if n_swap == 0:
+        return x, y
+    swap_idx = rng.choice(n, size=n_swap, replace=False)
+    src_idx = rng.choice(len(source.test_y), size=n_swap, replace=n_swap > len(source.test_y))
+    x, y = x.clone(), y.clone()
+    x[swap_idx] = source.test_x[src_idx]
+    y[swap_idx] = source.test_y[src_idx]
+    return x, y
+
+
 def apply_drift_transform(x: torch.Tensor, magnitude: float, max_angle_deg: float) -> torch.Tensor:
     """Apply a rotation of magnitude*max_angle_deg to a batch of images
     (N,1,28,28). magnitude in [0,1] — this is the actual mechanism that

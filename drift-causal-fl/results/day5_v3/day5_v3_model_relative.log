@@ -1,0 +1,127 @@
+======================================================================
+DAY 5 — FedAvg vs FedIPW-oracle vs FedIPW-estimated, by mechanism
+config: {'clients': 25, 'rounds': 25, 'seed': 0, 'target_rate': 0.3, 'beta': 4.0, 'threshold_exclude_frac': 0.2, 'drift_estimator': 'model_relative', 'mechanisms': ['mcar', 'mar', 'mnar', 'mnar_threshold'], 'out_prefix': 'results/day5_v3/day5_v3'}
+======================================================================
+[data] Loaded dataset: FEMNIST (real, writer-partitioned) (25 clients, 62 classes)
+[drift] mode=label_shift (real-writer label shift, no pixel corruption), 10/25 clients drift; MNAR driven by D_model_relative
+
+--- MCAR + fedavg ---
+[mcar/fedavg r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mcar/fedavg r  5/25] acc=0.0443 drift=0.0405 stable=0.0468 clean=0.0471  part=19/25 rho=+0.237  drifting_part=7/10
+[mcar/fedavg r 10/25] acc=0.1865 drift=0.1952 stable=0.1810 clean=0.1884  part=17/25 rho=-0.065  drifting_part=5/10
+[mcar/fedavg r 15/25] acc=0.3795 drift=0.3905 stable=0.3725 clean=0.3887  part=20/25 rho=-0.027  drifting_part=9/10
+[mcar/fedavg r 20/25] acc=0.5309 drift=0.5476 stable=0.5204 clean=0.5365  part=20/25 rho=-0.219  drifting_part=7/10
+[mcar/fedavg r 25/25] acc=0.6113 drift=0.6190 stable=0.6063 clean=0.6242  part=19/25 rho=-0.093  drifting_part=8/10
+
+--- MCAR + fedipw_oracle ---
+[mcar/fedipw_oracle r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mcar/fedipw_oracle r  5/25] acc=0.0443 drift=0.0405 stable=0.0468 clean=0.0471  part=19/25 rho=+0.237  drifting_part=7/10
+[mcar/fedipw_oracle r 10/25] acc=0.1865 drift=0.1952 stable=0.1810 clean=0.1884  part=17/25 rho=-0.065  drifting_part=5/10
+[mcar/fedipw_oracle r 15/25] acc=0.3795 drift=0.3905 stable=0.3725 clean=0.3887  part=20/25 rho=-0.027  drifting_part=9/10
+[mcar/fedipw_oracle r 20/25] acc=0.5309 drift=0.5476 stable=0.5204 clean=0.5365  part=20/25 rho=-0.219  drifting_part=7/10
+[mcar/fedipw_oracle r 25/25] acc=0.6113 drift=0.6190 stable=0.6063 clean=0.6242  part=19/25 rho=-0.093  drifting_part=8/10
+
+--- MCAR + fedipw_estimated ---
+[mcar/fedipw_estimated r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mcar/fedipw_estimated r  5/25] acc=0.0489 drift=0.0452 stable=0.0513 clean=0.0536  part=19/25 rho=+0.235  drifting_part=7/10
+[mcar/fedipw_estimated r 10/25] acc=0.1939 drift=0.2095 stable=0.1840 clean=0.1911  part=17/25 rho=-0.113  drifting_part=5/10
+[mcar/fedipw_estimated r 15/25] acc=0.4164 drift=0.4429 stable=0.3997 clean=0.4155  part=20/25 rho=-0.085  drifting_part=9/10
+[mcar/fedipw_estimated r 20/25] acc=0.5355 drift=0.5548 stable=0.5234 clean=0.5402  part=20/25 rho=-0.174  drifting_part=7/10
+[mcar/fedipw_estimated r 25/25] acc=0.6048 drift=0.6071 stable=0.6033 clean=0.6297  part=19/25 rho=-0.073  drifting_part=8/10
+
+--- MAR + fedavg ---
+[ mar/fedavg r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=19/25 rho=+0.000  drifting_part=0/0
+[ mar/fedavg r  5/25] acc=0.0499 drift=0.0452 stable=0.0528 clean=0.0526  part=20/25 rho=-0.201  drifting_part=8/10
+[ mar/fedavg r 10/25] acc=0.1496 drift=0.1357 stable=0.1584 clean=0.1791  part=18/25 rho=-0.066  drifting_part=7/10
+[ mar/fedavg r 15/25] acc=0.3223 drift=0.3071 stable=0.3318 clean=0.3398  part=18/25 rho=+0.111  drifting_part=9/10
+[ mar/fedavg r 20/25] acc=0.5125 drift=0.5167 stable=0.5098 clean=0.5199  part=21/25 rho=-0.006  drifting_part=9/10
+[ mar/fedavg r 25/25] acc=0.6094 drift=0.6405 stable=0.5897 clean=0.6168  part=17/25 rho=-0.016  drifting_part=8/10
+
+--- MAR + fedipw_oracle ---
+[ mar/fedipw_oracle r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=19/25 rho=+0.000  drifting_part=0/0
+[ mar/fedipw_oracle r  5/25] acc=0.0332 drift=0.0405 stable=0.0287 clean=0.0323  part=20/25 rho=-0.199  drifting_part=8/10
+[ mar/fedipw_oracle r 10/25] acc=0.1644 drift=0.1524 stable=0.1719 clean=0.1967  part=18/25 rho=-0.258  drifting_part=7/10
+[ mar/fedipw_oracle r 15/25] acc=0.3130 drift=0.3119 stable=0.3137 clean=0.3370  part=18/25 rho=-0.121  drifting_part=9/10
+[ mar/fedipw_oracle r 20/25] acc=0.5125 drift=0.5333 stable=0.4992 clean=0.5042  part=21/25 rho=-0.054  drifting_part=9/10
+[ mar/fedipw_oracle r 25/25] acc=0.5559 drift=0.6190 stable=0.5158 clean=0.5503  part=17/25 rho=-0.032  drifting_part=8/10
+
+--- MAR + fedipw_estimated ---
+[ mar/fedipw_estimated r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=19/25 rho=+0.000  drifting_part=0/0
+[ mar/fedipw_estimated r  5/25] acc=0.0332 drift=0.0405 stable=0.0287 clean=0.0323  part=20/25 rho=-0.201  drifting_part=8/10
+[ mar/fedipw_estimated r 10/25] acc=0.1551 drift=0.1452 stable=0.1614 clean=0.1874  part=18/25 rho=-0.301  drifting_part=7/10
+[ mar/fedipw_estimated r 15/25] acc=0.2789 drift=0.3071 stable=0.2609 clean=0.2899  part=18/25 rho=-0.228  drifting_part=9/10
+[ mar/fedipw_estimated r 20/25] acc=0.5023 drift=0.5262 stable=0.4872 clean=0.4866  part=21/25 rho=+0.040  drifting_part=9/10
+[ mar/fedipw_estimated r 25/25] acc=0.5854 drift=0.6238 stable=0.5611 clean=0.5937  part=17/25 rho=+0.098  drifting_part=8/10
+
+--- MNAR + fedavg ---
+[mnar/fedavg r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mnar/fedavg r  5/25] acc=0.0480 drift=0.0548 stable=0.0437 clean=0.0471  part=17/25 rho=+0.826  drifting_part=7/10
+[mnar/fedavg r 10/25] acc=0.0665 drift=0.0643 stable=0.0679 clean=0.0757  part=17/25 rho=+0.617  drifting_part=8/10
+[mnar/fedavg r 15/25] acc=0.3490 drift=0.3262 stable=0.3635 clean=0.3657  part=19/25 rho=+0.495  drifting_part=8/10
+[mnar/fedavg r 20/25] acc=0.5439 drift=0.5833 stable=0.5189 clean=0.5392  part=20/25 rho=+0.685  drifting_part=8/10
+[mnar/fedavg r 25/25] acc=0.5993 drift=0.6333 stable=0.5777 clean=0.6066  part=18/25 rho=+0.705  drifting_part=7/10
+
+--- MNAR + fedipw_oracle ---
+[mnar/fedipw_oracle r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mnar/fedipw_oracle r  5/25] acc=0.0480 drift=0.0548 stable=0.0437 clean=0.0471  part=17/25 rho=+0.826  drifting_part=7/10
+[mnar/fedipw_oracle r 10/25] acc=0.2031 drift=0.2048 stable=0.2021 clean=0.2179  part=17/25 rho=+0.341  drifting_part=4/10
+[mnar/fedipw_oracle r 15/25] acc=0.3638 drift=0.3524 stable=0.3710 clean=0.3869  part=17/25 rho=+0.524  drifting_part=8/10
+[mnar/fedipw_oracle r 20/25] acc=0.5365 drift=0.5476 stable=0.5294 clean=0.5457  part=18/25 rho=+0.747  drifting_part=7/10
+[mnar/fedipw_oracle r 25/25] acc=0.6066 drift=0.6381 stable=0.5867 clean=0.6085  part=18/25 rho=+0.415  drifting_part=8/10
+
+--- MNAR + fedipw_estimated ---
+[mnar/fedipw_estimated r  1/25] acc=0.0582 drift=0.0595 stable=0.0573 clean=0.0582  part=22/25 rho=+0.000  drifting_part=0/0
+[mnar/fedipw_estimated r  5/25] acc=0.0443 drift=0.0405 stable=0.0468 clean=0.0471  part=17/25 rho=+0.826  drifting_part=7/10
+[mnar/fedipw_estimated r 10/25] acc=0.1413 drift=0.1381 stable=0.1433 clean=0.1597  part=18/25 rho=+0.582  drifting_part=8/10
+[mnar/fedipw_estimated r 15/25] acc=0.3084 drift=0.3000 stable=0.3137 clean=0.3269  part=19/25 rho=+0.558  drifting_part=8/10
+[mnar/fedipw_estimated r 20/25] acc=0.4958 drift=0.5095 stable=0.4872 clean=0.5042  part=20/25 rho=+0.670  drifting_part=9/10
+[mnar/fedipw_estimated r 25/25] acc=0.5688 drift=0.5810 stable=0.5611 clean=0.5780  part=16/25 rho=+0.799  drifting_part=5/10
+
+--- MNAR_THRESHOLD + fedavg ---
+[mnar_threshold/fedavg r  1/25] acc=0.0323 drift=0.0381 stable=0.0287 clean=0.0323  part=16/25 rho=+0.000  drifting_part=0/0
+[mnar_threshold/fedavg r  5/25] acc=0.0480 drift=0.0548 stable=0.0437 clean=0.0471  part=18/25 rho=+0.628  drifting_part=8/10
+[mnar_threshold/fedavg r 10/25] acc=0.1348 drift=0.1214 stable=0.1433 clean=0.1607  part=17/25 rho=+0.478  drifting_part=5/10
+[mnar_threshold/fedavg r 15/25] acc=0.2992 drift=0.2714 stable=0.3167 clean=0.3306  part=18/25 rho=+0.532  drifting_part=5/10
+[mnar_threshold/fedavg r 20/25] acc=0.5254 drift=0.5571 stable=0.5053 clean=0.5226  part=17/25 rho=+0.528  drifting_part=6/10
+[mnar_threshold/fedavg r 25/25] acc=0.5919 drift=0.6452 stable=0.5581 clean=0.5743  part=14/25 rho=+0.182  drifting_part=5/10
+
+--- MNAR_THRESHOLD + fedipw_oracle ---
+[mnar_threshold/fedipw_oracle r  1/25] acc=0.0323 drift=0.0381 stable=0.0287 clean=0.0323  part=16/25 rho=+0.000  drifting_part=0/0
+[mnar_threshold/fedipw_oracle r  5/25] acc=0.0480 drift=0.0548 stable=0.0437 clean=0.0471  part=18/25 rho=+0.628  drifting_part=8/10
+[mnar_threshold/fedipw_oracle r 10/25] acc=0.1348 drift=0.1214 stable=0.1433 clean=0.1607  part=17/25 rho=+0.478  drifting_part=5/10
+[mnar_threshold/fedipw_oracle r 15/25] acc=0.2992 drift=0.2714 stable=0.3167 clean=0.3306  part=18/25 rho=+0.532  drifting_part=5/10
+[mnar_threshold/fedipw_oracle r 20/25] acc=0.5254 drift=0.5571 stable=0.5053 clean=0.5226  part=17/25 rho=+0.528  drifting_part=6/10
+[mnar_threshold/fedipw_oracle r 25/25] acc=0.5919 drift=0.6452 stable=0.5581 clean=0.5743  part=14/25 rho=+0.182  drifting_part=5/10
+
+--- MNAR_THRESHOLD + fedipw_estimated ---
+[mnar_threshold/fedipw_estimated r  1/25] acc=0.0323 drift=0.0381 stable=0.0287 clean=0.0323  part=16/25 rho=+0.000  drifting_part=0/0
+[mnar_threshold/fedipw_estimated r  5/25] acc=0.0794 drift=0.0786 stable=0.0799 clean=0.0794  part=18/25 rho=+0.629  drifting_part=8/10
+[mnar_threshold/fedipw_estimated r 10/25] acc=0.1690 drift=0.1571 stable=0.1765 clean=0.1828  part=17/25 rho=+0.473  drifting_part=8/10
+[mnar_threshold/fedipw_estimated r 15/25] acc=0.3019 drift=0.2833 stable=0.3137 clean=0.3250  part=18/25 rho=+0.505  drifting_part=5/10
+[mnar_threshold/fedipw_estimated r 20/25] acc=0.4746 drift=0.4952 stable=0.4615 clean=0.4783  part=16/25 rho=+0.417  drifting_part=7/10
+[mnar_threshold/fedipw_estimated r 25/25] acc=0.5854 drift=0.6071 stable=0.5716 clean=0.5910  part=14/25 rho=+0.323  drifting_part=6/10
+
+======================================================================
+SUMMARY — final round 25, drift-aware evaluation (D estimator: model_relative)
+acc = global (primary, drifted test sets) | drift = drift cohort (H1a) | stable | clean = legacy undrifted
+======================================================================
+condition                        acc   drift  stable   worst   clean | E[drop]   drop  nearX
+mcar_fedavg                   0.6113  0.6190  0.6063  0.3429  0.6242 |  0.3000  0.250  0.000
+mcar_fedipw_oracle            0.6113  0.6190  0.6063  0.3429  0.6242 |  0.3000  0.250  0.000
+mcar_fedipw_estimated         0.6048  0.6071  0.6033  0.3714  0.6297 |  0.3000  0.250  0.000
+mar_fedavg                    0.6094  0.6405  0.5897  0.3429  0.6168 |  0.3000  0.280  0.000
+mar_fedipw_oracle             0.5559  0.6190  0.5158  0.2857  0.5503 |  0.3000  0.280  0.000
+mar_fedipw_estimated          0.5854  0.6238  0.5611  0.2857  0.5937 |  0.3000  0.280  0.000
+mnar_fedavg                   0.5993  0.6333  0.5777  0.2857  0.6066 |  0.3000  0.280  0.080
+mnar_fedipw_oracle            0.6066  0.6381  0.5867  0.3429  0.6085 |  0.3000  0.290  0.098
+mnar_fedipw_estimated         0.5688  0.5810  0.5611  0.3393  0.5780 |  0.3000  0.280  0.098
+mnar_threshold_fedavg         0.5919  0.6452  0.5581  0.3429  0.5743 |  0.3000  0.323  0.200
+mnar_threshold_fedipw_oracle  0.5919  0.6452  0.5581  0.3429  0.5743 |  0.3000  0.323  0.200
+mnar_threshold_fedipw_estimated  0.5854  0.6071  0.5716  0.3143  0.5910 |  0.3000  0.320  0.200
+
+mean corr(D, D_true) over rounds: model-relative = -0.06461316673601274, model-independent = 0.7968806649072889
+
+FedIPW gain over FedAvg (global acc | drift-cohort acc):
+  fedipw_oracle      MCAR +0.0000 | +0.0000   MAR -0.0536 | -0.0214   MNAR +0.0074 | +0.0048   MNAR_THRESHOLD +0.0000 | +0.0000
+  fedipw_estimated   MCAR -0.0065 | -0.0119   MAR -0.0240 | -0.0167   MNAR -0.0305 | -0.0524   MNAR_THRESHOLD -0.0065 | -0.0381
+======================================================================

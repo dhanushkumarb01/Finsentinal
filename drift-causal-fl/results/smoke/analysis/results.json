@@ -1,0 +1,2770 @@
+{
+  "coverage": {
+    "model_independent": {
+      "seeds_complete": [
+        0,
+        1
+      ],
+      "seeds_incomplete": []
+    },
+    "model_relative": {
+      "seeds_complete": [
+        0,
+        1
+      ],
+      "seeds_incomplete": []
+    },
+    "n_runs_completed": 100
+  },
+  "min_practical_difference": 0.01,
+  "lmm": [
+    {
+      "metric": "acc_global",
+      "formula": "acc_global ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 131.80284525968557,
+      "seed_variance": 4.751192048010401e-05,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.000281293801882106,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5397656289675511,
+          "ci_lo": 0.5146350336456827,
+          "ci_hi": 0.5648962242894194,
+          "p": 0.0
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.010997409984258712,
+          "ci_lo": -0.043869564712031,
+          "ci_hi": 0.021874744743513575,
+          "p": 0.512012164212805
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.012945000253925077,
+          "ci_lo": -0.04581715498169739,
+          "ci_hi": 0.01992715447384723,
+          "p": 0.44021477687071897
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.01426286120562887,
+          "ci_lo": -0.04713501593340117,
+          "ci_hi": 0.01860929352214343,
+          "p": 0.39509911969025413
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.01993296429841234,
+          "ci_lo": -0.05280511902618463,
+          "ci_hi": 0.012939190429359947,
+          "p": 0.23464443048004913
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.023468843634145694,
+          "ci_lo": -0.009403311093626607,
+          "ci_hi": 0.056340998361918,
+          "p": 0.16172229036321828
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.006243969326089975,
+          "ci_lo": -0.03911612405386229,
+          "ci_hi": 0.02662818540168234,
+          "p": 0.709677384500861
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -1.9142239876535074e-15,
+          "ci_lo": -0.032872154727774223,
+          "ci_hi": 0.03287215472777039,
+          "p": 0.999999999999909
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.0012035955512651342,
+          "ci_lo": -0.0316685591765072,
+          "ci_hi": 0.03407575027903746,
+          "p": 0.9427905308737267
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.01708267736529186,
+          "ci_lo": -0.0635709244057343,
+          "ci_hi": 0.02940556967515057,
+          "p": 0.47139395990095034
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.033936823929712145,
+          "ci_lo": -0.08042507097015458,
+          "ci_hi": 0.012551423110730292,
+          "p": 0.15249020230120233
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.029241785587326097,
+          "ci_lo": -0.01724646145311634,
+          "ci_hi": 0.07573003262776853,
+          "p": 0.21763324807660722
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.03332106038291421,
+          "ci_lo": -0.07980930742335664,
+          "ci_hi": 0.013167186657528224,
+          "p": 0.16007187309819992
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.015564217155043494,
+          "ci_lo": -0.06205246419548592,
+          "ci_hi": 0.030924029885398937,
+          "p": 0.5116993602043591
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.0005599004621420192,
+          "ci_lo": -0.045928346578300416,
+          "ci_hi": 0.04704814750258446,
+          "p": 0.98116717476315
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.006127164694528518,
+          "ci_lo": -0.05261541173497095,
+          "ci_hi": 0.04036108234591392,
+          "p": 0.7961569948401396
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.02793535117566207,
+          "ci_lo": -0.0744235982161045,
+          "ci_hi": 0.01855289586478036,
+          "p": 0.2388898601108871
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.0007160631760722121,
+          "ci_lo": -0.045772183864370215,
+          "ci_hi": 0.047204310216514646,
+          "p": 0.9759159036017674
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.015664516784319654,
+          "ci_lo": -0.030823730256122776,
+          "ci_hi": 0.062152763824762085,
+          "p": 0.5089826764946637
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.024112538723272597,
+          "ci_lo": -0.07060078576371503,
+          "ci_hi": 0.022375708317169833,
+          "p": 0.3093462568790719
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.02514600578944506,
+          "ci_lo": -0.07163425282988747,
+          "ci_hi": 0.021342241250997356,
+          "p": 0.2890690196134269
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.01715504545223507,
+          "ci_lo": -0.06364329249267753,
+          "ci_hi": 0.029333201588207382,
+          "p": 0.4695177620587777
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.011939464730081742,
+          "ci_lo": -0.03454878231036072,
+          "ci_hi": 0.05842771177052421,
+          "p": 0.6147021644615209
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.01823040983190091,
+          "ci_lo": -0.06471865687234336,
+          "ci_hi": 0.02825783720854155,
+          "p": 0.4421297833728446
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.005315880351427618,
+          "ci_lo": -0.05180412739187006,
+          "ci_hi": 0.041172366689014826,
+          "p": 0.8226641295781221
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_global ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 37.1930247804641,
+          "df": 20,
+          "p": 0.011093641275220695
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_global ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 22.8270180363981,
+          "df": 16,
+          "p": 0.11843755471370725
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_global ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 31.557483242157275,
+          "df": 20,
+          "p": 0.04824786765834538
+        }
+      ],
+      "estimator": "model_independent"
+    },
+    {
+      "metric": "acc_drift_cohort",
+      "formula": "acc_drift_cohort ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The Hessian matrix at the estimated parameter values is not positive definite.",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 121.32104513344535,
+      "seed_variance": 4.26662357194356e-13,
+      "seed_variance_at_boundary": true,
+      "resid_variance": 0.00045704949321582404,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5874594257178554,
+          "ci_lo": 0.5578305815888087,
+          "ci_hi": 0.617088269846902,
+          "p": 0.0
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.017084893882648982,
+          "ci_lo": -0.05898640706782743,
+          "ci_hi": 0.02481661930252946,
+          "p": 0.4242009160404536
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.011591760299628452,
+          "ci_lo": -0.053493273484806945,
+          "ci_hi": 0.03030975288555004,
+          "p": 0.587673629511488
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.027147315855183433,
+          "ci_lo": -0.06904882904036197,
+          "ci_hi": 0.014754197329995108,
+          "p": 0.20414550774626372
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.0372097378277179,
+          "ci_lo": -0.07911125101289643,
+          "ci_hi": 0.004691775357460633,
+          "p": 0.08177058045753312
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.016978776529336097,
+          "ci_lo": -0.024922736655842444,
+          "ci_hi": 0.05888028971451464,
+          "p": 0.42708444384223154
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.005031210986269673,
+          "ci_lo": -0.04693272417144821,
+          "ci_hi": 0.03687030219890887,
+          "p": 0.8139468846333899
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -2.0620874799370805e-15,
+          "ci_lo": -0.0419015131851806,
+          "ci_hi": 0.04190151318517648,
+          "p": 0.9999999999999231
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.0009425717852709398,
+          "ci_lo": -0.04284408497044949,
+          "ci_hi": 0.040958941399907606,
+          "p": 0.9648332529261838
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.006878901373285518,
+          "ci_lo": -0.052378786857149064,
+          "ci_hi": 0.0661365896037201,
+          "p": 0.8200182420718768
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.03697877652933547,
+          "ci_lo": -0.09623646475977007,
+          "ci_hi": 0.022278911701099142,
+          "p": 0.22129835457372038
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.001654182272157553,
+          "ci_lo": -0.060911870502592204,
+          "ci_hi": 0.0576035059582771,
+          "p": 0.9563674917638806
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.05475655430711381,
+          "ci_lo": -0.11401424253754847,
+          "ci_hi": 0.004501133923320848,
+          "p": 0.07012726655854613
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0072534332084870454,
+          "ci_lo": -0.06651112143892164,
+          "ci_hi": 0.05200425502194755,
+          "p": 0.8104006056937814
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.012409488139822162,
+          "ci_lo": -0.07166717637025677,
+          "ci_hi": 0.04684820009061245,
+          "p": 0.6814779577150885
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.02048064918851684,
+          "ci_lo": -0.038777039041917816,
+          "ci_hi": 0.07973833741895149,
+          "p": 0.4981503060382204
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.0030399500624246813,
+          "ci_lo": -0.05621773816800997,
+          "ci_hi": 0.062297638292859336,
+          "p": 0.9199099391836025
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.006666666666668538,
+          "ci_lo": -0.05259102156376605,
+          "ci_hi": 0.06592435489710312,
+          "p": 0.8254803753442506
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.02071161048689399,
+          "ci_lo": -0.03854607774354063,
+          "ci_hi": 0.07996929871732861,
+          "p": 0.49331736111914426
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.010649188514359049,
+          "ci_lo": -0.048608499716075615,
+          "ci_hi": 0.0699068767447937,
+          "p": 0.7246696976087403
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.015805243445695113,
+          "ci_lo": -0.043452444784739544,
+          "ci_hi": 0.07506293167612976,
+          "p": 0.6011394132789196
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.02328963795256169,
+          "ci_lo": -0.03596805027787291,
+          "ci_hi": 0.08254732618299629,
+          "p": 0.4411154076025874
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.03255305867665725,
+          "ci_lo": -0.026704629553777372,
+          "ci_hi": 0.09181074690709187,
+          "p": 0.28161378692313666
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.025174781523098582,
+          "ci_lo": -0.03408290670733609,
+          "ci_hi": 0.08443246975353325,
+          "p": 0.4050350015605254
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.02154806491885405,
+          "ci_lo": -0.037709623311580606,
+          "ci_hi": 0.08080575314928871,
+          "p": 0.47602643670955547
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_drift_cohort ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 27.133413660673682,
+          "df": 20,
+          "p": 0.13155205919919472
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_drift_cohort ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/lbfgs",
+          "LR": 14.373467160093867,
+          "df": 16,
+          "p": 0.5709127930406339
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_drift_cohort ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 20.316903760818377,
+          "df": 20,
+          "p": 0.4382693419874947
+        }
+      ],
+      "estimator": "model_independent"
+    },
+    {
+      "metric": "acc_stable_cohort",
+      "formula": "acc_stable_cohort ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 123.23773393818817,
+      "seed_variance": 0.00028834904746882507,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.00037536066132500586,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5145039925863867,
+          "ci_lo": 0.47879955648086614,
+          "ci_hi": 0.5502084286919072,
+          "p": 1.7227571403809583e-175
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.006889223068770313,
+          "ci_lo": -0.044862009684826426,
+          "ci_hi": 0.031083563547285798,
+          "p": 0.7221498841756174
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.01048366063848103,
+          "ci_lo": -0.04845644725453709,
+          "ci_hi": 0.02748912597757503,
+          "p": 0.5884291757219259
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.0056351236619704165,
+          "ci_lo": -0.043607910278026484,
+          "ci_hi": 0.032337662954085654,
+          "p": 0.7711609182033202
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.00963187188209262,
+          "ci_lo": -0.04760465849814871,
+          "ci_hi": 0.028340914733963468,
+          "p": 0.6190841851528133
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.023475520090561402,
+          "ci_lo": -0.014497266525494653,
+          "ci_hi": 0.06144830670661745,
+          "p": 0.22563179373371356
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.005447841117813362,
+          "ci_lo": -0.04342062773386941,
+          "ci_hi": 0.03252494549824268,
+          "p": 0.7785645830057337
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -1.6497220256539434e-16,
+          "ci_lo": -0.03797278661605623,
+          "ci_hi": 0.037972786616055895,
+          "p": 0.9999999999999932
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.0027426488133221816,
+          "ci_lo": -0.03523013780273388,
+          "ci_hi": 0.04071543542937824,
+          "p": 0.8874262072397092
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.02222142068376151,
+          "ci_lo": -0.07592305051728754,
+          "ci_hi": 0.03148020914976452,
+          "p": 0.41735324011125263
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.03028983014166873,
+          "ci_lo": -0.08399145997519472,
+          "ci_hi": 0.02341179969185727,
+          "p": 0.2689444105565102
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.045472201721334815,
+          "ci_lo": -0.008229428112191184,
+          "ci_hi": 0.09917383155486081,
+          "p": 0.09699250128187505
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.022623731334172986,
+          "ci_lo": -0.07632536116769902,
+          "ci_hi": 0.03107789849935304,
+          "p": 0.4089715149683293
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.02113518192765051,
+          "ci_lo": -0.07483681176117654,
+          "ci_hi": 0.032566447905875526,
+          "p": 0.44048357814316996
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.0064119994006960135,
+          "ci_lo": -0.04728963043282997,
+          "ci_hi": 0.060113629234222,
+          "p": 0.8149689824185316
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.023053787546681765,
+          "ci_lo": -0.07675541738020776,
+          "ci_hi": 0.030647842286844227,
+          "p": 0.4001234479370098
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.04490064314212923,
+          "ci_lo": -0.09860227297565524,
+          "ci_hi": 0.00880098669139679,
+          "p": 0.10126495772640053
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.0016661210039452259,
+          "ci_lo": -0.05536775083747128,
+          "ci_hi": 0.05203550882958083,
+          "p": 0.9515114004378643
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.01380619169963782,
+          "ci_lo": -0.0398954381338882,
+          "ci_hi": 0.06750782153316384,
+          "p": 0.6143396695703631
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.043346891664678054,
+          "ci_lo": -0.09704852149820407,
+          "ci_hi": 0.010354738168847966,
+          "p": 0.113639503968724
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.04535983219484022,
+          "ci_lo": -0.09906146202836626,
+          "ci_hi": 0.00834179763868581,
+          "p": 0.09782089248576063
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.0375064508431875,
+          "ci_lo": -0.09120808067671354,
+          "ci_hi": 0.016195178990338545,
+          "p": 0.17103559037087346
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.0007491301766280883,
+          "ci_lo": -0.05445076001015411,
+          "ci_hi": 0.05295249965689793,
+          "p": 0.9781875789991581
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.041250714448223876,
+          "ci_lo": -0.0949523442817499,
+          "ci_hi": 0.012450915385302144,
+          "p": 0.13218547863304356
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.01797218784855344,
+          "ci_lo": -0.07167381768207948,
+          "ci_hi": 0.03572944198497259,
+          "p": 0.5118652003668909
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_stable_cohort ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 38.69148625284282,
+          "df": 20,
+          "p": 0.0072813892270148055
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_stable_cohort ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 29.562591894670163,
+          "df": 16,
+          "p": 0.020407169993894577
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_stable_cohort ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 42.58558513434656,
+          "df": 20,
+          "p": 0.002318237152740496
+        }
+      ],
+      "estimator": "model_independent"
+    },
+    {
+      "metric": "acc_worst_client",
+      "formula": "acc_worst_client ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 93.13250790365447,
+      "seed_variance": 3.4052086417255356e-05,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0013845961571218024,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.2554298642533935,
+          "ci_lo": 0.20322986995930692,
+          "ci_hi": 0.30762985854748004,
+          "p": 8.750809960275809e-22
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": 0.061921733920122846,
+          "ci_lo": -0.011008843486577588,
+          "ci_hi": 0.1348523113268233,
+          "p": 0.09609081839893417
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": 0.042006033182504225,
+          "ci_lo": -0.030924544224196278,
+          "ci_hi": 0.11493661058920474,
+          "p": 0.2589459021158106
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": 0.0013156733140620395,
+          "ci_lo": -0.07161490409263847,
+          "ci_hi": 0.07424625072076256,
+          "p": 0.9717943519248955
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": 0.06463702537871374,
+          "ci_lo": -0.008293552027986748,
+          "ci_hi": 0.13756760278541424,
+          "p": 0.08237306455532457
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.04946524064171167,
+          "ci_lo": -0.023465336764988833,
+          "ci_hi": 0.12239581804841218,
+          "p": 0.1837333074439773
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.007692307692308045,
+          "ci_lo": -0.06523826971439245,
+          "ci_hi": 0.08062288509900853,
+          "p": 0.8362238563823426
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 3.0808688933348093e-16,
+          "ci_lo": -0.07293057740670016,
+          "ci_hi": 0.07293057740670077,
+          "p": 0.9999999999999933
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.05740436034553732,
+          "ci_lo": -0.015526217061163222,
+          "ci_hi": 0.13033493775223787,
+          "p": 0.1229019940291659
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.08861171061009972,
+          "ci_lo": -0.19175112229035635,
+          "ci_hi": 0.014527701070156898,
+          "p": 0.09220229683795117
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.11007130124777248,
+          "ci_lo": -0.21321071292802912,
+          "ci_hi": -0.006931889567515823,
+          "p": 0.03646616003170906
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.08388584014832083,
+          "ci_lo": -0.01925357153193584,
+          "ci_hi": 0.1870252518285775,
+          "p": 0.11091648472905886
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.1662354269771155,
+          "ci_lo": -0.26937483865737216,
+          "ci_hi": -0.06309601529685882,
+          "p": 0.0015832176964083282
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.04339176804930292,
+          "ci_lo": -0.14653117972955954,
+          "ci_hi": 0.05974764363095368,
+          "p": 0.40961224658764317
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.00023310023310077322,
+          "ci_lo": -0.10337251191335743,
+          "ci_hi": 0.10290631144715588,
+          "p": 0.9964656887731483
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.027841108663026883,
+          "ci_lo": -0.13098052034328356,
+          "ci_hi": 0.07529830301722978,
+          "p": 0.5967595702030262
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.03263403263403312,
+          "ci_lo": -0.13577344431428975,
+          "ci_hi": 0.07050537904622353,
+          "p": 0.535161445940401
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.05614758479559014,
+          "ci_lo": -0.15928699647584674,
+          "ci_hi": 0.046991826884666445,
+          "p": 0.28598281768186207
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -5.108760636751698e-16,
+          "ci_lo": -0.10313941168025716,
+          "ci_hi": 0.10313941168025613,
+          "p": 0.9999999999999922
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.019095060190950988,
+          "ci_lo": -0.12223447187120763,
+          "ci_hi": 0.08404435148930565,
+          "p": 0.7167061125011784
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.07424749163879642,
+          "ci_lo": -0.17738690331905305,
+          "ci_hi": 0.028891920041460212,
+          "p": 0.15826548565054077
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.09125387394490231,
+          "ci_lo": -0.19439328562515898,
+          "ci_hi": 0.011885537735354362,
+          "p": 0.08289990708171215
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.04456357793953773,
+          "ci_lo": -0.14770298961979444,
+          "ci_hi": 0.05857583374071898,
+          "p": 0.3970819939259569
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.11180876078924695,
+          "ci_lo": -0.21494817246950365,
+          "ci_hi": -0.00866934910899024,
+          "p": 0.03361097645367743
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.1324119614400951,
+          "ci_lo": -0.2355513731203518,
+          "ci_hi": -0.02927254975983838,
+          "p": 0.011861711442232133
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_worst_client ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 36.921212133580724,
+          "df": 20,
+          "p": 0.011959167194961784
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_worst_client ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 34.911351975051275,
+          "df": 16,
+          "p": 0.004086784724845623
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_worst_client ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 36.721085591712324,
+          "df": 20,
+          "p": 0.01263610591776185
+        }
+      ],
+      "estimator": "model_independent"
+    },
+    {
+      "metric": "acc_clean",
+      "formula": "acc_clean ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/lbfgs",
+      "optimizer_errors": [],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 125.42342575540965,
+      "seed_variance": 0.0004381113182534898,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.000337052844222938,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.4776065207455189,
+          "ci_lo": 0.43902050508290463,
+          "ci_hi": 0.5161925364081332,
+          "p": 5.2028155693004224e-130
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.00668706515667061,
+          "ci_lo": -0.04267004198572474,
+          "ci_hi": 0.029295911672383514,
+          "p": 0.7156794765149241
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.01240160479406839,
+          "ci_lo": -0.048384581623122556,
+          "ci_hi": 0.023581372034985774,
+          "p": 0.4993546583522389
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.002220557615154171,
+          "ci_lo": -0.038203534444208306,
+          "ci_hi": 0.03376241921389997,
+          "p": 0.9037290557917438
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.006859732872886147,
+          "ci_lo": -0.04284270970194025,
+          "ci_hi": 0.029123243956167957,
+          "p": 0.7086690701452434
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.008977451627647234,
+          "ci_lo": -0.04496042845670137,
+          "ci_hi": 0.027005525201406904,
+          "p": 0.624845510030595
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0012899294093748866,
+          "ci_lo": -0.037272906238429035,
+          "ci_hi": 0.03469304741967927,
+          "p": 0.9439855859326599
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -4.202367620553815e-17,
+          "ci_lo": -0.03598297682905418,
+          "ci_hi": 0.035982976829054096,
+          "p": 0.9999999999999982
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.00213422375704636,
+          "ci_lo": -0.03384875307200778,
+          "ci_hi": 0.0381172005861005,
+          "p": 0.907454837412405
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.008403585394342675,
+          "ci_lo": -0.04248402845186253,
+          "ci_hi": 0.059291199240547876,
+          "p": 0.7461889162594342
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.007032400589101542,
+          "ci_lo": -0.057920014435306776,
+          "ci_hi": 0.043855213257103697,
+          "p": 0.7865012379840823
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.05272459499263631,
+          "ci_lo": 0.0018369811464310978,
+          "ci_hi": 0.10361220883884154,
+          "p": 0.042283781124163825
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.009593215174445287,
+          "ci_lo": -0.041294398671759894,
+          "ci_hi": 0.06048082902065047,
+          "p": 0.7117641101194707
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.02822228429231626,
+          "ci_lo": -0.07910989813852147,
+          "ci_hi": 0.022665329553888947,
+          "p": 0.2770383336526193
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.010640648011782047,
+          "ci_lo": -0.04024696583442319,
+          "ci_hi": 0.06152826185798728,
+          "p": 0.6819304256575673
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.022936874714336482,
+          "ci_lo": -0.07382448856054172,
+          "ci_hi": 0.027950739131868754,
+          "p": 0.37700607167476263
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.039389822761667706,
+          "ci_lo": -0.09027743660787291,
+          "ci_hi": 0.011497791084537488,
+          "p": 0.1292363039924902
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.0033797166218068942,
+          "ci_lo": -0.05426733046801209,
+          "ci_hi": 0.0475078972243983,
+          "p": 0.8964306517511635
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.018127570971509875,
+          "ci_lo": -0.03276004287469537,
+          "ci_hi": 0.06901518481771513,
+          "p": 0.4850563750619985
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.03916129196079422,
+          "ci_lo": -0.09004890580699942,
+          "ci_hi": 0.011726321885410979,
+          "p": 0.13147306858046195
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.034953785993601084,
+          "ci_lo": -0.08584139983980626,
+          "ci_hi": 0.015933827852604096,
+          "p": 0.17821739714893203
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.02094992636229749,
+          "ci_lo": -0.07183754020850269,
+          "ci_hi": 0.02993768748390771,
+          "p": 0.41972539485413074
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.01650881113198924,
+          "ci_lo": -0.03437880271421599,
+          "ci_hi": 0.06739642497819448,
+          "p": 0.5248769360362702
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.030300644964704696,
+          "ci_lo": -0.08118825881090991,
+          "ci_hi": 0.020586968881500512,
+          "p": 0.24319189932450735
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.004700116804631525,
+          "ci_lo": -0.05558773065083672,
+          "ci_hi": 0.04618749704157367,
+          "p": 0.8563459576524194
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_clean ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/lbfgs",
+          "LR": 31.661866905056115,
+          "df": 20,
+          "p": 0.04703725988174038
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_clean ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 27.27529503141551,
+          "df": 16,
+          "p": 0.03852285602424407
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_clean ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 31.957568879566907,
+          "df": 20,
+          "p": 0.043752545648697766
+        }
+      ],
+      "estimator": "model_independent"
+    },
+    {
+      "metric": "acc_global",
+      "formula": "acc_global ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The Hessian matrix at the estimated parameter values is not positive definite.",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 115.58659408470714,
+      "seed_variance": 6.283891043763583e-13,
+      "seed_variance_at_boundary": true,
+      "resid_variance": 0.0005748848311441645,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5397656289675515,
+          "ci_lo": 0.5065361510308162,
+          "ci_hi": 0.5729951069042869,
+          "p": 2.003036648949936e-222
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.0109974099842601,
+          "ci_lo": -0.057990988327285053,
+          "ci_hi": 0.035996168358764846,
+          "p": 0.6464714216144449
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.0332232999847675,
+          "ci_lo": -0.08021687832779244,
+          "ci_hi": 0.013770278358257435,
+          "p": 0.16585497554202955
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.026592097912754686,
+          "ci_lo": -0.07358567625577958,
+          "ci_hi": 0.020401480430270208,
+          "p": 0.26739644010160835
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.08494743791580218,
+          "ci_lo": -0.13194101625882704,
+          "ci_hi": -0.037953859572777325,
+          "p": 0.00039574091926150763
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.023468843634144858,
+          "ci_lo": -0.023524734708880037,
+          "ci_hi": 0.07046242197716976,
+          "p": 0.3276706722669743
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0062439693260910615,
+          "ci_lo": -0.05323754766911597,
+          "ci_hi": 0.04074960901693385,
+          "p": 0.79454166650103
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -3.1703806246952125e-15,
+          "ci_lo": -0.04699357834302805,
+          "ci_hi": 0.04699357834302171,
+          "p": 0.9999999999998945
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.0012035955512639876,
+          "ci_lo": -0.04578998279176089,
+          "ci_hi": 0.04819717389428887,
+          "p": 0.9599642613083921
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.01708267736529054,
+          "ci_lo": -0.08354163320243886,
+          "ci_hi": 0.049376278471857785,
+          "p": 0.6144081621340862
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.03205906251586739,
+          "ci_lo": -0.0985180183530157,
+          "ci_hi": 0.03439989332128092,
+          "p": 0.34442159860614563
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.033407394241021245,
+          "ci_lo": -0.09986635007816952,
+          "ci_hi": 0.03305156159612704,
+          "p": 0.32451160675670065
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.07001295007871917,
+          "ci_lo": 0.003553994241570907,
+          "ci_hi": 0.13647190591586744,
+          "p": 0.03894419456779418
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.015564217155041894,
+          "ci_lo": -0.08202317299219022,
+          "ci_hi": 0.05089473868210644,
+          "p": 0.6462272037679904
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.02139556142400392,
+          "ci_lo": -0.045063394413144386,
+          "ci_hi": 0.08785451726115223,
+          "p": 0.5280510645589016
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.005427606520742649,
+          "ci_lo": -0.07188656235789094,
+          "ci_hi": 0.06103134931640564,
+          "p": 0.8728279687765435
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.02558021431110991,
+          "ci_lo": -0.040878741526038376,
+          "ci_hi": 0.09203917014825819,
+          "p": 0.4506121201888147
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.0007160631760740457,
+          "ci_lo": -0.06574289266107426,
+          "ci_hi": 0.06717501901322236,
+          "p": 0.9831517925628593
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.06125895078969754,
+          "ci_lo": -0.12771790662684585,
+          "ci_hi": 0.005200005047450752,
+          "p": 0.07082328981513465
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.0030927835051515863,
+          "ci_lo": -0.06955173934229986,
+          "ci_hi": 0.06336617233199668,
+          "p": 0.927325455195849
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.0677923924635655,
+          "ci_lo": 0.0013334366264172448,
+          "ci_hi": 0.13425134830071375,
+          "p": 0.04557711269813896
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.0171550454522334,
+          "ci_lo": -0.08361400128938172,
+          "ci_hi": 0.049303910384914926,
+          "p": 0.6129090477210999
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.005742471179730037,
+          "ci_lo": -0.060716484657418274,
+          "ci_hi": 0.07220142701687834,
+          "p": 0.8655188344161681
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.030498704992131385,
+          "ci_lo": -0.03596025084501688,
+          "ci_hi": 0.09695766082927965,
+          "p": 0.36841417430970935
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.10685338479508744,
+          "ci_lo": 0.040394428957939196,
+          "ci_hi": 0.17331234063223566,
+          "p": 0.0016257326122988962
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_global ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 39.04321160316886,
+          "df": 20,
+          "p": 0.0065853794563803525
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_global ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/lbfgs",
+          "LR": 28.902954272260047,
+          "df": 16,
+          "p": 0.02459875984531069
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_global ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 35.24816239427628,
+          "df": 20,
+          "p": 0.0188217132548136
+        }
+      ],
+      "estimator": "model_relative"
+    },
+    {
+      "metric": "acc_drift_cohort",
+      "formula": "acc_drift_cohort ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 100.32143403852919,
+      "seed_variance": 0.00035807425428925995,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0009644530292159773,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5874594257178541,
+          "ci_lo": 0.537058859754614,
+          "ci_hi": 0.6378599916810943,
+          "p": 1.6398010409203002e-115
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.01708489388264746,
+          "ci_lo": -0.07795283779590034,
+          "ci_hi": 0.043783050030605425,
+          "p": 0.5822246372156898
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.015430711610487705,
+          "ci_lo": -0.07629865552374063,
+          "ci_hi": 0.04543723230276521,
+          "p": 0.6192785996460848
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.004906367041199301,
+          "ci_lo": -0.06577431095445214,
+          "ci_hi": 0.055961576872053546,
+          "p": 0.8744675754041596
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.030736579275906,
+          "ci_lo": -0.09160452318915888,
+          "ci_hi": 0.03013136463734687,
+          "p": 0.3223080491922894
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.01697877652933757,
+          "ci_lo": -0.04388916738391527,
+          "ci_hi": 0.07784672044259042,
+          "p": 0.5845703417634733
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.005031210986267987,
+          "ci_lo": -0.06589915489952085,
+          "ci_hi": 0.05583673292698487,
+          "p": 0.8713008675041815
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -8.426202444122845e-16,
+          "ci_lo": -0.06086794391325371,
+          "ci_hi": 0.06086794391325203,
+          "p": 0.9999999999999784
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.0009425717852692834,
+          "ci_lo": -0.06181051569852214,
+          "ci_hi": 0.05992537212798357,
+          "p": 0.975787073558871
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.006878901373284192,
+          "ci_lo": -0.07920137042260285,
+          "ci_hi": 0.09295917316917122,
+          "p": 0.8755396992690913
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.009032459425717057,
+          "ci_lo": -0.09511273122160412,
+          "ci_hi": 0.07704781237017001,
+          "p": 0.8370562657467414
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.04888888888888965,
+          "ci_lo": -0.037191382906997375,
+          "ci_hi": 0.13496916068477666,
+          "p": 0.2656429803926831
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.020212234706617607,
+          "ci_lo": -0.0658680370892694,
+          "ci_hi": 0.10629250650250462,
+          "p": 0.6453634078622819
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.007253433208488525,
+          "ci_lo": -0.0933337050043756,
+          "ci_hi": 0.07882683858739856,
+          "p": 0.8688230756514873
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.008320848938825565,
+          "ci_lo": -0.09440112073471264,
+          "ci_hi": 0.07775942285706151,
+          "p": 0.8497341604123702
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.03404494382022386,
+          "ci_lo": -0.12012521561611092,
+          "ci_hi": 0.05203532797566319,
+          "p": 0.4382390792049887
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0060112359550552035,
+          "ci_lo": -0.09209150775094224,
+          "ci_hi": 0.08006903584083183,
+          "p": 0.891133559752107
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.006666666666667541,
+          "ci_lo": -0.07941360512921954,
+          "ci_hi": 0.09274693846255462,
+          "p": 0.879349801400292
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.06071161048689047,
+          "ci_lo": -0.14679188228277756,
+          "ci_hi": 0.025368661308996635,
+          "p": 0.16686602077327528
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.0025780274656687606,
+          "ci_lo": -0.08350224433021826,
+          "ci_hi": 0.08865829926155579,
+          "p": 0.9531917160387723
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.04677278401997595,
+          "ci_lo": -0.0393074877759111,
+          "ci_hi": 0.13285305581586299,
+          "p": 0.28688916368749784
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.023289637952560147,
+          "ci_lo": -0.0627906338433269,
+          "ci_hi": 0.1093699097484472,
+          "p": 0.5959161597610609
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.017546816479401664,
+          "ci_lo": -0.06853345531648541,
+          "ci_hi": 0.10362708827528874,
+          "p": 0.6895071960874501
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.01779650436953897,
+          "ci_lo": -0.06828376742634805,
+          "ci_hi": 0.103876776165426,
+          "p": 0.6853238322883317
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.05859550561797852,
+          "ci_lo": -0.0274847661779085,
+          "ci_hi": 0.14467577741386556,
+          "p": 0.1821505681558867
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_drift_cohort ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 17.07315510239323,
+          "df": 20,
+          "p": 0.648218400029433
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_drift_cohort ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 12.841765895185347,
+          "df": 16,
+          "p": 0.6842902584882631
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_drift_cohort ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 23.056499400365112,
+          "df": 20,
+          "p": 0.2860288206295689
+        }
+      ],
+      "estimator": "model_relative"
+    },
+    {
+      "metric": "acc_stable_cohort",
+      "formula": "acc_stable_cohort ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 110.30585044667276,
+      "seed_variance": 0.00015386536179937723,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0006574880616832426,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5145039925863866,
+          "ci_lo": 0.4750275390644598,
+          "ci_hi": 0.5539804461083133,
+          "p": 6.307949024265743e-144
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.006889223068770755,
+          "ci_lo": -0.057145698413288995,
+          "ci_hi": 0.04336725227574749,
+          "p": 0.7881802421918185
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.04103568634197011,
+          "ci_lo": -0.09129216168648835,
+          "ci_hi": 0.009220789002548128,
+          "p": 0.10951867974126096
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.03706668368394531,
+          "ci_lo": -0.08732315902846355,
+          "ci_hi": 0.013189791660572915,
+          "p": 0.14829722077337107
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.11113484898090589,
+          "ci_lo": -0.16139132432542413,
+          "ci_hi": -0.060878373636387664,
+          "p": 1.4630851922071435e-05
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.023475520090560923,
+          "ci_lo": -0.026780955253957305,
+          "ci_hi": 0.07373199543507915,
+          "p": 0.3599148907788079
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.00544784111781376,
+          "ci_lo": -0.055704316462331996,
+          "ci_hi": 0.044808634226704475,
+          "p": 0.831746913682875
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -5.604891550881063e-16,
+          "ci_lo": -0.050256475344518804,
+          "ci_hi": 0.05025647534451768,
+          "p": 0.9999999999999826
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.0027426488133217987,
+          "ci_lo": -0.047513826531196464,
+          "ci_hi": 0.05299912415784006,
+          "p": 0.9148197612534649
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.02222142068376105,
+          "ci_lo": -0.0932948097130478,
+          "ci_hi": 0.04885196834552569,
+          "p": 0.5400140672059639
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.03961233900637545,
+          "ci_lo": -0.11068572803566219,
+          "ci_hi": 0.03146105002291129,
+          "p": 0.2746685266318213
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.06728160080795022,
+          "ci_lo": -0.13835498983723693,
+          "ci_hi": 0.003791788221336509,
+          "p": 0.0635392309972985
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.09162833154836923,
+          "ci_lo": 0.020554942519082492,
+          "ci_hi": 0.16270172057765597,
+          "p": 0.011510707643376488
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.02113518192765014,
+          "ci_lo": -0.0922085709569369,
+          "ci_hi": 0.049938207101636614,
+          "p": 0.5600030861990762
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.03514807806491394,
+          "ci_lo": -0.03592531096437283,
+          "ci_hi": 0.10622146709420072,
+          "p": 0.33241285602364734
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.008807828687801916,
+          "ci_lo": -0.062265560341484824,
+          "ci_hi": 0.07988121771708866,
+          "p": 0.8080904866051712
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.0428613443279751,
+          "ci_lo": -0.028212044701311653,
+          "ci_hi": 0.11393473335726186,
+          "p": 0.23721717157394995
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.0016661210039448703,
+          "ci_lo": -0.07273951003323162,
+          "ci_hi": 0.06940726802534189,
+          "p": 0.9633532988132439
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.06276046146418837,
+          "ci_lo": -0.13383385049347513,
+          "ci_hi": 0.008312927565098396,
+          "p": 0.08350144453190948
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.007254077210349697,
+          "ci_lo": -0.07832746623963645,
+          "ci_hi": 0.06381931181893706,
+          "p": 0.841446994380078
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.07696064014560901,
+          "ci_lo": 0.00588725111632224,
+          "ci_hi": 0.14803402917489578,
+          "p": 0.03381133804646649
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.037506450843187156,
+          "ci_lo": -0.10857983987247395,
+          "ci_hi": 0.03356693818609964,
+          "p": 0.3009953676366065
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.00018728254415746124,
+          "ci_lo": -0.07088610648512933,
+          "ci_hi": 0.07126067157344426,
+          "p": 0.9958792478143618
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.03539085173326571,
+          "ci_lo": -0.03568253729602108,
+          "ci_hi": 0.10646424076255251,
+          "p": 0.3290842169896788
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.13089385102852824,
+          "ci_lo": 0.05982046199924146,
+          "ci_hi": 0.20196724005781502,
+          "p": 0.0003066574132100691
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_stable_cohort ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 49.16809005111352,
+          "df": 20,
+          "p": 0.0002910232465116318
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_stable_cohort ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 37.91622649836199,
+          "df": 16,
+          "p": 0.0015555201253276993
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_stable_cohort ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 41.650389833952886,
+          "df": 20,
+          "p": 0.003070655050856089
+        }
+      ],
+      "estimator": "model_relative"
+    },
+    {
+      "metric": "acc_worst_client",
+      "formula": "acc_worst_client ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The Hessian matrix at the estimated parameter values is not positive definite.",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 84.19907703320169,
+      "seed_variance": 1.6715398891027286e-12,
+      "seed_variance_at_boundary": true,
+      "resid_variance": 0.0020176130018350617,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.2554298642533927,
+          "ci_lo": 0.19317804793825463,
+          "ci_hi": 0.3176816805685308,
+          "p": 8.83349089756103e-16
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": 0.06192173392012348,
+          "ci_lo": -0.026115628958635638,
+          "ci_hi": 0.14995909679888259,
+          "p": 0.1680319235623603
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.011140819964348323,
+          "ci_lo": -0.09917818284310749,
+          "ci_hi": 0.07689654291441085,
+          "p": 0.8041138425727523
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.017302773952389314,
+          "ci_lo": -0.10534013683114843,
+          "ci_hi": 0.0707345889263698,
+          "p": 0.7000823296264087
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.06713554987212156,
+          "ci_lo": -0.15517291275088074,
+          "ci_hi": 0.02090181300663764,
+          "p": 0.13501110292548088
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.04946524064171217,
+          "ci_lo": -0.03857212223704704,
+          "ci_hi": 0.1375026035204714,
+          "p": 0.2707930835814647
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.007692307692308734,
+          "ci_lo": -0.08034505518645044,
+          "ci_hi": 0.0957296705710679,
+          "p": 0.8640249820968284
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 1.1990408665951682e-15,
+          "ci_lo": -0.08803736287875798,
+          "ci_hi": 0.08803736287876036,
+          "p": 0.9999999999999787
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.057404360345537565,
+          "ci_lo": -0.03063300253322159,
+          "ci_hi": 0.14544172322429672,
+          "p": 0.20125451646117554
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.08861171061010018,
+          "ci_lo": -0.21311534318880343,
+          "ci_hi": 0.03589192196860308,
+          "p": 0.1630323248049239
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.13797776977924137,
+          "ci_lo": -0.2624814023579447,
+          "ci_hi": -0.013474137200538028,
+          "p": 0.029849865967840283
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.20425899760938215,
+          "ci_lo": -0.3287626301880854,
+          "ci_hi": -0.0797553650306789,
+          "p": 0.001302216917578203
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.15442622168964995,
+          "ci_lo": -0.27892985426835326,
+          "ci_hi": -0.029922589110946612,
+          "p": 0.015056713225195568
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0433917680493035,
+          "ci_lo": -0.16789540062800676,
+          "ci_hi": 0.08111186452939975,
+          "p": 0.494554459111196
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.01991570073761744,
+          "ci_lo": -0.10458793184108586,
+          "ci_hi": 0.14441933331632076,
+          "p": 0.7538875972018733
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.020979020979019884,
+          "ci_lo": -0.10352461159968337,
+          "ci_hi": 0.14548265355772314,
+          "p": 0.7412062094471217
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.01806020066889758,
+          "ci_lo": -0.1425638332476009,
+          "ci_hi": 0.10644343190980576,
+          "p": 0.7761745768848316
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.056147584795590975,
+          "ci_lo": -0.18065121737429424,
+          "ci_hi": 0.06835604778311227,
+          "p": 0.3767567744344352
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.02490951165407377,
+          "ci_lo": -0.14941314423277707,
+          "ci_hi": 0.09959412092462955,
+          "p": 0.6949613535230408
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.0018967334035814745,
+          "ci_lo": -0.12260689917512178,
+          "ci_hi": 0.12640036598228474,
+          "p": 0.9761796634161203
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.06345393736697941,
+          "ci_lo": -0.061049695211723876,
+          "ci_hi": 0.1879575699456827,
+          "p": 0.317840204846481
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.09125387394490243,
+          "ci_lo": -0.2157575065236057,
+          "ci_hi": 0.03324975863380082,
+          "p": 0.15084906696929976
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.07919444240959232,
+          "ci_lo": -0.20369807498829562,
+          "ci_hi": 0.04530919016911096,
+          "p": 0.21250876752564352
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.008157613912088833,
+          "ci_lo": -0.1163460186666144,
+          "ci_hi": 0.13266124649079206,
+          "p": 0.8978174118682904
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.06189783834915641,
+          "ci_lo": -0.06260579422954687,
+          "ci_hi": 0.1864014709278597,
+          "p": 0.3298532084855438
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_worst_client ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 42.16741218503836,
+          "df": 20,
+          "p": 0.0026299284552645298
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_worst_client ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 29.229549224576147,
+          "df": 16,
+          "p": 0.02243345298476352
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_worst_client ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 43.14081822368968,
+          "df": 20,
+          "p": 0.001958496404373467
+        }
+      ],
+      "estimator": "model_relative"
+    },
+    {
+      "metric": "acc_clean",
+      "formula": "acc_clean ~ C(condition, Treatment('mcar')) * C(method, Treatment('fedavg')) + (1|seed)",
+      "n_obs": 50,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 114.96619626581102,
+      "seed_variance": 0.00018189708909099894,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0005387124508861848,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.4776065207455193,
+          "ci_lo": 0.44040308089366076,
+          "ci_hi": 0.5148099605973778,
+          "p": 1.0596991426086369e-139
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.006687065156671273,
+          "ci_lo": -0.05217818183096821,
+          "ci_hi": 0.038804051517625664,
+          "p": 0.7732631902557248
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.028898989386014613,
+          "ci_lo": -0.07439010606031152,
+          "ci_hi": 0.01659212728828229,
+          "p": 0.2130950828908048
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.02743639226042424,
+          "ci_lo": -0.07292750893472116,
+          "ci_hi": 0.018054724413872687,
+          "p": 0.2371722019688124
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.089714844345133,
+          "ci_lo": -0.13520596101942992,
+          "ci_hi": -0.044223727670836065,
+          "p": 0.00011094223874939082
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.008977451627647891,
+          "ci_lo": -0.05446856830194481,
+          "ci_hi": 0.03651366504664903,
+          "p": 0.6989121229459981
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.0012899294093755174,
+          "ci_lo": -0.04678104608367242,
+          "ci_hi": 0.04420118726492139,
+          "p": 0.9556795686801667
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -7.088080122841233e-16,
+          "ci_lo": -0.04549111667429763,
+          "ci_hi": 0.045491116674296214,
+          "p": 0.9999999999999757
+        },
+        {
+          "term": "C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.0021342237570457024,
+          "ci_lo": -0.04335689291725123,
+          "ci_hi": 0.04762534043134263,
+          "p": 0.9267361320666694
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.008403585394343348,
+          "ci_lo": -0.05593056877394415,
+          "ci_hi": 0.07273773956263085,
+          "p": 0.7979366595704595
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.02769285460362527,
+          "ci_lo": -0.09202700877191275,
+          "ci_hi": 0.036641299564662215,
+          "p": 0.39885208272438755
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": -0.026491798283479005,
+          "ci_lo": -0.09082595245176651,
+          "ci_hi": 0.03784235588480851,
+          "p": 0.4196189488851022
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.feddrift]",
+          "estimate": 0.09381062414301024,
+          "ci_lo": 0.029476469974722738,
+          "ci_hi": 0.15814477831129775,
+          "p": 0.004263531365035823
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": -0.02822228429231562,
+          "ci_lo": -0.0925564384606031,
+          "ci_hi": 0.03611186987597187,
+          "p": 0.3898979707891561
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.023156518206287807,
+          "ci_lo": -0.041177635961999665,
+          "ci_hi": 0.08749067237457528,
+          "p": 0.4805165771628864
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.016093646843736396,
+          "ci_lo": -0.0482405073245511,
+          "ci_hi": 0.0804278010120239,
+          "p": 0.6239223704012569
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_estimated]",
+          "estimate": 0.038581077649688336,
+          "ci_lo": -0.025753076518599177,
+          "ci_hi": 0.10291523181797585,
+          "p": 0.239839958040159
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.003379716621806203,
+          "ci_lo": -0.06771387079009372,
+          "ci_hi": 0.06095443754648131,
+          "p": 0.9179912837349954
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.05379742014118053,
+          "ci_lo": -0.11813157430946802,
+          "ci_hi": 0.010536734027106955,
+          "p": 0.10122191222954868
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": -0.00010029962927152625,
+          "ci_lo": -0.06443445379755904,
+          "ci_hi": 0.06423385453901599,
+          "p": 0.9975619353983097
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.fedipw_oracle]",
+          "estimate": 0.06607333299476986,
+          "ci_lo": 0.001739178826482335,
+          "ci_hi": 0.1304074871630574,
+          "p": 0.0441200248287659
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": -0.020949926362296818,
+          "ci_lo": -0.08528408053058434,
+          "ci_hi": 0.043384227805990695,
+          "p": 0.5233127017478698
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.003165151592098588,
+          "ci_lo": -0.061169002576188895,
+          "ci_hi": 0.06749930576038607,
+          "p": 0.9231810338351182
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.03801609872530664,
+          "ci_lo": -0.026318055442980888,
+          "ci_hi": 0.10235025289359417,
+          "p": 0.24679278476864375
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(method, Treatment('fedavg'))[T.flfdms]",
+          "estimate": 0.11369661266568547,
+          "ci_lo": 0.049362458497397954,
+          "ci_hi": 0.17803076683397298,
+          "p": 0.0005325831734523679
+        }
+      ],
+      "lrt": [
+        {
+          "test": "condition_main_and_interaction",
+          "reduced": "acc_clean ~ C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 40.25210440864504,
+          "df": 20,
+          "p": 0.004641272441903315
+        },
+        {
+          "test": "condition_x_method_interaction",
+          "reduced": "acc_clean ~ C(condition, Treatment('mcar')) + C(method, Treatment('fedavg'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 32.70876742380216,
+          "df": 16,
+          "p": 0.008075049084630942
+        },
+        {
+          "test": "method_main_and_interaction",
+          "reduced": "acc_clean ~ C(condition, Treatment('mcar'))",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 37.99700722001961,
+          "df": 20,
+          "p": 0.008863042159427507
+        }
+      ],
+      "estimator": "model_relative"
+    }
+  ],
+  "estimator_x_condition_fedavg": [
+    {
+      "metric": "acc_global",
+      "formula": "acc_global ~ C(condition, Treatment('mcar')) * C(estimator) + (1|seed)",
+      "n_obs": 20,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The Hessian matrix at the estimated parameter values is not positive definite.",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 42.5433467186966,
+      "seed_variance": 1.3667388097518626e-13,
+      "seed_variance_at_boundary": true,
+      "resid_variance": 0.0008315561455137878,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.539765628967548,
+          "ci_lo": 0.49980071503913215,
+          "ci_hi": 0.5797305428959638,
+          "p": 2.077814466034392e-154
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.010997409984256235,
+          "ci_lo": -0.0675163332762506,
+          "ci_hi": 0.04552151330773814,
+          "p": 0.702929956164047
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.01294500025392252,
+          "ci_lo": -0.0694639235459169,
+          "ci_hi": 0.04357392303807186,
+          "p": 0.6534988230551673
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.01426286120562624,
+          "ci_lo": -0.07078178449762063,
+          "ci_hi": 0.04225606208636814,
+          "p": 0.6208770705267677
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.01993296429840984,
+          "ci_lo": -0.07645188759040421,
+          "ci_hi": 0.03658595899358452,
+          "p": 0.4894174920939436
+        },
+        {
+          "term": "C(estimator)[T.model_relative]",
+          "estimate": 3.5717956370362454e-16,
+          "ci_lo": -0.056518923291994004,
+          "ci_hi": 0.05651892329199471,
+          "p": 0.9999999999999901
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(estimator)[T.model_relative]",
+          "estimate": -3.5995512126518747e-16,
+          "ci_lo": -0.07992982785026344,
+          "ci_hi": 0.07992982785026272,
+          "p": 0.999999999999993
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(estimator)[T.model_relative]",
+          "estimate": -0.02027829973084186,
+          "ci_lo": -0.10020812758110494,
+          "ci_hi": 0.05965152811942122,
+          "p": 0.619016027971601
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(estimator)[T.model_relative]",
+          "estimate": -0.012329236707125631,
+          "ci_lo": -0.09225906455738869,
+          "ci_hi": 0.06760059114313743,
+          "p": 0.7624036098762834
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(estimator)[T.model_relative]",
+          "estimate": -0.06501447361738902,
+          "ci_lo": -0.14494430146765208,
+          "ci_hi": 0.014915354232874045,
+          "p": 0.11088593762297068
+        }
+      ],
+      "lrt": [
+        {
+          "test": "estimator_x_condition",
+          "reduced": "acc_global ~ C(condition, Treatment('mcar')) + C(estimator)",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 3.1983698580419855,
+          "df": 4,
+          "p": 0.5251942830053613
+        }
+      ]
+    },
+    {
+      "metric": "acc_drift_cohort",
+      "formula": "acc_drift_cohort ~ C(condition, Treatment('mcar')) * C(estimator) + (1|seed)",
+      "n_obs": 20,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/lbfgs",
+      "optimizer_errors": [],
+      "converged": true,
+      "warnings": [
+        "Random effects covariance is singular",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 37.644447612026696,
+      "seed_variance": 9.337656715356572e-05,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0012850744543491325,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5874594257178511,
+          "ci_lo": 0.5360042858606592,
+          "ci_hi": 0.6389145655750431,
+          "p": 6.628967915757152e-111
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.01708489388264526,
+          "ci_lo": -0.08734555569213984,
+          "ci_hi": 0.05317576792684931,
+          "p": 0.6336515929428165
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.01159176029962409,
+          "ci_lo": -0.08185242210911867,
+          "ci_hi": 0.05866890150987048,
+          "p": 0.7464232106984563
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.027147315855179637,
+          "ci_lo": -0.09740797766467421,
+          "ci_hi": 0.04311334595431493,
+          "p": 0.44887558845722975
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.03720973782771401,
+          "ci_lo": -0.10747039963720859,
+          "ci_hi": 0.03305092398178056,
+          "p": 0.2992754948348184
+        },
+        {
+          "term": "C(estimator)[T.model_relative]",
+          "estimate": 1.3491811834409617e-15,
+          "ci_lo": -0.07026066180949327,
+          "ci_hi": 0.07026066180949596,
+          "p": 0.99999999999997
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(estimator)[T.model_relative]",
+          "estimate": -1.3509159069169385e-15,
+          "ci_lo": -0.09936358083229796,
+          "ci_hi": 0.09936358083229527,
+          "p": 0.9999999999999787
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(estimator)[T.model_relative]",
+          "estimate": -0.0038389513108627767,
+          "ci_lo": -0.10320253214315936,
+          "ci_hi": 0.09552462952143381,
+          "p": 0.9396386934800913
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(estimator)[T.model_relative]",
+          "estimate": 0.02224094881398118,
+          "ci_lo": -0.07712263201831544,
+          "ci_hi": 0.12160452964627781,
+          "p": 0.6608741445696333
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(estimator)[T.model_relative]",
+          "estimate": 0.006473158551808948,
+          "ci_lo": -0.09289042228048766,
+          "ci_hi": 0.10583673938410557,
+          "p": 0.8983989078499114
+        }
+      ],
+      "lrt": [
+        {
+          "test": "estimator_x_condition",
+          "reduced": "acc_drift_cohort ~ C(condition, Treatment('mcar')) + C(estimator)",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 0.32966272828994647,
+          "df": 4,
+          "p": 0.987819747765393
+        }
+      ]
+    },
+    {
+      "metric": "acc_stable_cohort",
+      "formula": "acc_stable_cohort ~ C(condition, Treatment('mcar')) * C(estimator) + (1|seed)",
+      "n_obs": 20,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 43.546089907707966,
+      "seed_variance": 7.4697940862820365e-06,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0007450639954270596,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.5145039925863862,
+          "ci_lo": 0.47648539474535323,
+          "ci_hi": 0.5525225904274192,
+          "p": 5.110742635922638e-155
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.006889223068770553,
+          "ci_lo": -0.06038812639598733,
+          "ci_hi": 0.04660968025844622,
+          "p": 0.8007390382039987
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.010483660638481223,
+          "ci_lo": -0.06398256396569799,
+          "ci_hi": 0.04301524268873554,
+          "p": 0.7009227773459401
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.005635123661970788,
+          "ci_lo": -0.059134026989187564,
+          "ci_hi": 0.047863779665245985,
+          "p": 0.8364424713192753
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.009631871882092845,
+          "ci_lo": -0.06313077520930963,
+          "ci_hi": 0.04386703144512393,
+          "p": 0.7241864072765759
+        },
+        {
+          "term": "C(estimator)[T.model_relative]",
+          "estimate": -5.784869111513658e-16,
+          "ci_lo": -0.05349890332721739,
+          "ci_hi": 0.05349890332721624,
+          "p": 0.9999999999999831
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(estimator)[T.model_relative]",
+          "estimate": 5.887217796596289e-16,
+          "ci_lo": -0.07565887465743651,
+          "ci_hi": 0.07565887465743767,
+          "p": 0.9999999999999878
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(estimator)[T.model_relative]",
+          "estimate": -0.030552025703488223,
+          "ci_lo": -0.10621090036092531,
+          "ci_hi": 0.04510684895394887,
+          "p": 0.42867640251472616
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(estimator)[T.model_relative]",
+          "estimate": -0.03143156002197374,
+          "ci_lo": -0.10709043467941082,
+          "ci_hi": 0.04422731463546334,
+          "p": 0.4155056310954742
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(estimator)[T.model_relative]",
+          "estimate": -0.1015029770988125,
+          "ci_lo": -0.17716185175624957,
+          "ci_hi": -0.025844102441375416,
+          "p": 0.008551994427250728
+        }
+      ],
+      "lrt": [
+        {
+          "test": "estimator_x_condition",
+          "reduced": "acc_stable_cohort ~ C(condition, Treatment('mcar')) + C(estimator)",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 7.536468605947334,
+          "df": 4,
+          "p": 0.1101118916138856
+        }
+      ]
+    },
+    {
+      "metric": "acc_worst_client",
+      "formula": "acc_worst_client ~ C(condition, Treatment('mcar')) * C(estimator) + (1|seed)",
+      "n_obs": 20,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The Hessian matrix at the estimated parameter values is not positive definite.",
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 42.204832998301455,
+      "seed_variance": 1.533018868908927e-11,
+      "seed_variance_at_boundary": true,
+      "resid_variance": 0.0008601873152000161,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.2554298642533945,
+          "ci_lo": 0.21478275975433705,
+          "ci_hi": 0.2960769687524519,
+          "p": 7.375592218651157e-35
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": 0.06192173392012158,
+          "ci_lo": 0.0044380479785929225,
+          "ci_hi": 0.11940541986165024,
+          "p": 0.034747935425232884
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": 0.042006033182502976,
+          "ci_lo": -0.015477652759025684,
+          "ci_hi": 0.09948971912403164,
+          "p": 0.15207575588152472
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": 0.0013156733140609765,
+          "ci_lo": -0.056168012627467685,
+          "ci_hi": 0.058799359255589635,
+          "p": 0.9642195357355191
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": 0.06463702537871263,
+          "ci_lo": 0.007153339437183971,
+          "ci_hi": 0.1221207113202413,
+          "p": 0.027533890686882757
+        },
+        {
+          "term": "C(estimator)[T.model_relative]",
+          "estimate": -6.713379852030244e-16,
+          "ci_lo": -0.05748368594152937,
+          "ci_hi": 0.05748368594152802,
+          "p": 0.9999999999999817
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(estimator)[T.model_relative]",
+          "estimate": 6.852157730108389e-16,
+          "ci_lo": -0.08129420827370482,
+          "ci_hi": 0.08129420827370618,
+          "p": 0.9999999999999868
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(estimator)[T.model_relative]",
+          "estimate": -0.05314685314685241,
+          "ci_lo": -0.1344410614205579,
+          "ci_hi": 0.028147355126853082,
+          "p": 0.20007255332372242
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(estimator)[T.model_relative]",
+          "estimate": -0.018618447266451392,
+          "ci_lo": -0.09991265554015688,
+          "ci_hi": 0.06267576100725411,
+          "p": 0.65351696527987
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(estimator)[T.model_relative]",
+          "estimate": -0.13177257525083547,
+          "ci_lo": -0.21306678352454095,
+          "ci_hi": -0.05047836697712997,
+          "p": 0.0014882090982600376
+        }
+      ],
+      "lrt": [
+        {
+          "test": "estimator_x_condition",
+          "reduced": "acc_worst_client ~ C(condition, Treatment('mcar')) + C(estimator)",
+          "reduced_fit": "mixedlm/lbfgs",
+          "LR": 10.754273544929674,
+          "df": 4,
+          "p": 0.02946896634745753
+        }
+      ]
+    },
+    {
+      "metric": "acc_clean",
+      "formula": "acc_clean ~ C(condition, Treatment('mcar')) * C(estimator) + (1|seed)",
+      "n_obs": 20,
+      "n_seeds": 2,
+      "fit_method": "mixedlm/powell",
+      "optimizer_errors": [
+        "lbfgs: LinAlgError: Singular matrix"
+      ],
+      "converged": true,
+      "warnings": [
+        "The MLE may be on the boundary of the parameter space."
+      ],
+      "llf": 43.423434939762274,
+      "seed_variance": 9.988930034928394e-05,
+      "seed_variance_at_boundary": false,
+      "resid_variance": 0.0006966939327389291,
+      "coefficients": [
+        {
+          "term": "Intercept",
+          "estimate": 0.4776065207455181,
+          "ci_lo": 0.4384910398769173,
+          "ci_hi": 0.516722001614119,
+          "p": 1.440496470454511e-126
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]",
+          "estimate": -0.006687065156670484,
+          "ci_lo": -0.058420236847994786,
+          "ci_hi": 0.045046106534653824,
+          "p": 0.8000006320107864
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]",
+          "estimate": -0.012401604794068247,
+          "ci_lo": -0.06413477648539256,
+          "ci_hi": 0.039331566897256066,
+          "p": 0.6384640116466623
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]",
+          "estimate": -0.0022205576151540615,
+          "ci_lo": -0.05395372930647838,
+          "ci_hi": 0.049512614076170254,
+          "p": 0.9329545907955249
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]",
+          "estimate": -0.0068597328728859566,
+          "ci_lo": -0.05859290456421028,
+          "ci_hi": 0.04487343881843836,
+          "p": 0.7949501850778369
+        },
+        {
+          "term": "C(estimator)[T.model_relative]",
+          "estimate": 1.0863705768304753e-17,
+          "ci_lo": -0.051733171691324305,
+          "ci_hi": 0.05173317169132433,
+          "p": 0.9999999999999997
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mar]:C(estimator)[T.model_relative]",
+          "estimate": -9.215718466126788e-18,
+          "ci_lo": -0.07316175303044674,
+          "ci_hi": 0.07316175303044671,
+          "p": 0.9999999999999998
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b1]:C(estimator)[T.model_relative]",
+          "estimate": -0.016497384591945562,
+          "ci_lo": -0.08965913762239228,
+          "ci_hi": 0.056664368438501145,
+          "p": 0.6585210072681227
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b4]:C(estimator)[T.model_relative]",
+          "estimate": -0.025215834645269393,
+          "ci_lo": -0.09837758767571611,
+          "ci_hi": 0.04794591838517732,
+          "p": 0.4993463142208554
+        },
+        {
+          "term": "C(condition, Treatment('mcar'))[T.mnar_b8]:C(estimator)[T.model_relative]",
+          "estimate": -0.08285511147224625,
+          "ci_lo": -0.15601686450269298,
+          "ci_hi": -0.00969335844179954,
+          "p": 0.026442953874668586
+        }
+      ],
+      "lrt": [
+        {
+          "test": "estimator_x_condition",
+          "reduced": "acc_clean ~ C(condition, Treatment('mcar')) + C(estimator)",
+          "reduced_fit": "mixedlm/powell",
+          "LR": 5.697476739092735,
+          "df": 4,
+          "p": 0.22290870829752668
+        }
+      ]
+    }
+  ],
+  "reproducibility": {
+    "cells_compared": 20,
+    "max_abs_diff": 0.0,
+    "identical_cells": 20
+  },
+  "figures": [
+    "figures\\methods_by_condition_acc_global.png",
+    "figures\\methods_by_condition_acc_drift_cohort.png",
+    "figures\\methods_by_condition_acc_stable_cohort.png",
+    "figures\\methods_by_condition_acc_worst_client.png",
+    "figures\\methods_by_condition_acc_clean.png",
+    "figures\\dose_response_acc_global.png",
+    "figures\\dose_response_acc_drift_cohort.png",
+    "figures\\cohort_gap_fedavg.png",
+    "figures\\cohort_gap_feddrift.png",
+    "figures\\cohort_gap_fedipw_estimated.png",
+    "figures\\cohort_gap_fedipw_oracle.png",
+    "figures\\cohort_gap_flfdms.png",
+    "figures\\estimator_comparison.png",
+    "figures\\curves_acc_global.png",
+    "figures\\curves_acc_drift_cohort.png",
+    "figures\\feddrift_clusters.png",
+    "figures\\seed_variability_acc_global.png"
+  ]
+}

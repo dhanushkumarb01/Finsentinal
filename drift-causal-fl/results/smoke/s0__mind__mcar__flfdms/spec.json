@@ -1,0 +1,78 @@
+{
+  "spec": {
+    "study": "smoke",
+    "run_id": "s0__mind__mcar__flfdms",
+    "seed": 0,
+    "drift_estimator": "model_independent",
+    "mechanism": "mcar",
+    "beta": null,
+    "method": "flfdms",
+    "method_kwargs": {},
+    "data": {
+      "dataset": "femnist",
+      "n_clients": 20,
+      "n_reserve": 6,
+      "reserve_seed_offset": 10000
+    },
+    "drift": {
+      "mode": "label_shift",
+      "fraction": 0.3,
+      "start_round": 4,
+      "ramp_rounds": 4
+    },
+    "training": {
+      "rounds": 15,
+      "local_epochs": 1,
+      "lr": 0.03,
+      "batch_size": 10,
+      "eval_every": 5
+    },
+    "participation": {
+      "target_rate": 0.3,
+      "gamma": 2.0,
+      "threshold_exclude_frac": 0.2,
+      "model_relative_ema_decay": 0.7
+    },
+    "condition": "mcar"
+  },
+  "config_hash": "77d0d7941097c54a",
+  "environment": {
+    "python": "3.11.9",
+    "torch": "2.9.1+cpu",
+    "numpy": "1.26.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "host": "LAPTOP-1AMQCORD",
+    "cpu_count": 12,
+    "torch_threads": 1,
+    "device": "cpu",
+    "flush_denormal": true,
+    "git": {
+      "commit": "3a6a77dc2dcf0b222b542a667282bbed29a8e9ca",
+      "src_dirty": true
+    }
+  },
+  "data": {
+    "cache_file": "femnist_n20_s0_r6_rs10000.pt",
+    "clients_sha256": "2252ac02da1d8116b7bb6f54e08bb4ca236ee9477054f6d0ce5fe5c1ab6b3fad",
+    "reserve_sha256": "d8f4f672167af196a20164472facd705890908bc1192c5da55d087f18deb0832",
+    "n_train_total": 3291,
+    "n_test_total": 812,
+    "drift_cohort": [
+      0,
+      4,
+      5,
+      8,
+      10,
+      12
+    ],
+    "drift_source": {
+      "0": -6,
+      "4": -1,
+      "5": -5,
+      "8": -4,
+      "10": -3,
+      "12": -2
+    }
+  }
+}

@@ -16,7 +16,6 @@ before it's trusted — that's the whole point of building both.
 """
 from __future__ import annotations
 
-from collections import defaultdict
 
 import torch
 import torch.nn as nn

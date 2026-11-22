@@ -1,0 +1,20 @@
+# Calibration pilot on a HELD-OUT tuning seed (100; never used in the MVP grid).
+# Same operating point as configs/mvp.yaml. Two questions only:
+#  (1) is lr=0.03 stable over 100 rounds at 100 clients (FedAvg-equivalent run)?
+#  (2) what is the distribution of FedDrift's drift-test statistic
+#      min_m l^tau - min_m l^{tau-1} for stable vs drifting clients, so delta can
+#      be chosen from the paper's grid {0.02,...,0.20} (Appendix A)?
+# FedDrift with delta=1e6 never flags/merges, i.e. it is exactly FedAvg (unit
+# tested) while logging the statistic for every participant.
+study: pilot_calibration
+expected_total_runs: 1
+data: {dataset: femnist, n_clients: 100, n_reserve: 30, reserve_seed_offset: 10000}
+drift: {mode: label_shift, fraction: 0.3, start_round: 20, ramp_rounds: 10}
+training: {rounds: 100, local_epochs: 1, lr: 0.03, batch_size: 10, eval_every: 5}
+participation: {target_rate: 0.3, gamma: 2.0, threshold_exclude_frac: 0.2, model_relative_ema_decay: 0.7}
+conditions:
+  - {mechanism: mcar}
+methods:
+  - {name: feddrift, kwargs: {delta: 1000000.0, max_models: 1}}
+seeds: [100]
+drift_estimators: [model_relative]

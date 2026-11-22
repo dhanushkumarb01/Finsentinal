@@ -1,0 +1,29 @@
+======================================================================
+DAY 3/4 — dropout mechanisms tested against REAL drift scores
+======================================================================
+[data] Loaded dataset: FEMNIST (real, writer-partitioned) (40 clients, 62 classes)
+[data] D_indep at round 2: min=0.0000 max=0.0001 mean=0.0000 std=0.0000
+[data] 16/40 clients actively drifting at this round
+
+--- Check 1: marginal dropout rate stays matched across mechanisms ---
+Target rate: 0.30
+
+MCAR:              realized dropout rate = 0.3650 (+/- 0.0682)
+MAR (gamma=2.0):   realized dropout rate = 0.2950 (+/- 0.0367)
+
+MNAR-logistic, sweeping beta:
+  beta= 0.0:  expected dropout rate = 0.3000  realized = 0.3200  |  realized rho(D, dropout) = -0.0146
+  beta= 0.5:  expected dropout rate = 0.3000  realized = 0.3000  |  realized rho(D, dropout) = +0.1441
+  beta= 1.0:  expected dropout rate = 0.3000  realized = 0.3200  |  realized rho(D, dropout) = +0.4238
+  beta= 2.0:  expected dropout rate = 0.3000  realized = 0.2950  |  realized rho(D, dropout) = +0.6496
+  beta= 4.0:  expected dropout rate = 0.3000  realized = 0.3000  |  realized rho(D, dropout) = +0.7447
+  beta= 8.0:  expected dropout rate = 0.3000  realized = 0.3050  |  realized rho(D, dropout) = +0.7480
+
+--- Check 2: does rho climb monotonically with beta? ---
+rho sequence: [-0.015, 0.144, 0.424, 0.65, 0.745, 0.748]
+Monotonically non-decreasing: YES
+
+--- Threshold mechanism (robustness check) ---
+threshold (exclude_frac=0.2): expected dropout rate = 0.3000  realized = 0.3050  |  realized rho(D, dropout) = +0.6324
+======================================================================
+PASS conditions: (1) all realized rates land near 0.3 (2) rho climbs with beta (3) rho stays 0 for MCAR/MAR, clearly nonzero for MNAR/threshold.

@@ -1,5 +1,16 @@
+# Runtime dependencies actually imported by src/ and scripts/.
+# Verified environment (2026-11-19, Windows x86-64, CPU): Python 3.11.9,
+# torch 2.9.1+cpu, torchvision 0.24.1, numpy 1.26.4, flwr-datasets 0.6.1
+# (pulls datasets 4.8.5). Original environment (macOS): torch 2.11.0,
+# torchvision 0.26.0, flwr-datasets 0.6.1 — see PROGRESS.md "Reproducibility"
+# for why exact accuracies differ across platforms.
 torch>=2.0
 torchvision>=0.15
 numpy>=1.24
-flwr>=1.37
-flwr-datasets>=0.6
+flwr-datasets==0.6.1
+# flwr itself is not imported anywhere yet (simulation is a plain PyTorch loop);
+# install it only when a Flower Strategy/ServerApp is actually introduced.
+# flwr>=1.37
+
+# Tests
+pytest>=7

@@ -1,0 +1,1 @@
+{"start": "2026-11-19T23:42:12", "pid": 13104, "status": "done", "resumed_from_checkpoint": false, "final_acc_global": 0.5172413793103449, "end": "2026-11-19T23:59:51", "duration_sec": 1058.5, "rss_mb": 999.8}

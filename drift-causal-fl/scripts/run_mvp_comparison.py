@@ -67,11 +67,12 @@ def main() -> None:
     print("\n" + "=" * 70)
     print("SUMMARY — final-round accuracy by mechanism (matched dropout rate)")
     print("=" * 70)
-    for mechanism, log in results.items():
-        final = log[-1]
+    for mechanism, res in results.items():
+        s = res["summary"]
         print(
-            f"{mechanism.upper():>4}: final accuracy = {final['accuracy']:.4f}  "
-            f"(realized dropout rate = {final['realized_dropout_rate']:.3f}, rho = {final['realized_rho']:+.3f})"
+            f"{mechanism.upper():>4}: final acc (drift-aware global) = {s['final_acc_global']:.4f}  "
+            f"drift cohort = {s['final_acc_drift_cohort']:.4f}  clean (legacy) = {s['final_acc_clean']:.4f}  "
+            f"(mean realized dropout rate = {s['mean_realized_dropout_rate']:.3f})"
         )
     print("=" * 70)
 

@@ -1,0 +1,17 @@
+{
+  "model_independent": {
+    "seeds_complete": [
+      0,
+      1
+    ],
+    "seeds_incomplete": []
+  },
+  "model_relative": {
+    "seeds_complete": [
+      0,
+      1
+    ],
+    "seeds_incomplete": []
+  },
+  "n_runs_completed": 100
+}

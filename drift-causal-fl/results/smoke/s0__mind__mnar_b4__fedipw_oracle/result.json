@@ -1,0 +1,381 @@
+{
+  "config": {
+    "num_classes": 62,
+    "mechanism": "mnar",
+    "target_rate": 0.3,
+    "rounds": 15,
+    "method": "fedipw_oracle",
+    "drift_estimator": "model_independent",
+    "beta": 4.0,
+    "gamma": 2.0,
+    "threshold_exclude_frac": 0.2,
+    "model_relative_ema_decay": 0.7,
+    "local_epochs": 1,
+    "lr": 0.03,
+    "batch_size": 10,
+    "eval_every": 5,
+    "seed": 0,
+    "eval_seed": 0,
+    "n_clients": 20,
+    "drift_mode": "label_shift",
+    "n_drift_cohort": 6,
+    "ramp_rounds": 4
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "acc_global": 0.05295566502463054,
+      "acc_drift_cohort": 0.04888888888888889,
+      "acc_stable_cohort": 0.054514480408858604,
+      "acc_client_mean": 0.06013196845413347,
+      "acc_client_std": 0.0475620073513822,
+      "acc_worst_client": 0.0,
+      "acc_clean": 0.05295566502463054,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 17,
+      "expected_dropout_rate": 0.29999999999999993,
+      "realized_dropout_rate": 0.15000000000000002,
+      "realized_rho": 0.0,
+      "realized_rho_true": 0.0,
+      "corr_Dmodel_Dtrue": null,
+      "corr_Dindep_Dtrue": null,
+      "n_drifting_total": 0,
+      "n_drifting_participated": 0,
+      "elapsed_sec": 33.6,
+      "method_log": {
+        "propensity": {
+          "2": 0.7,
+          "3": 0.7,
+          "4": 0.7,
+          "5": 0.7,
+          "6": 0.7,
+          "7": 0.7,
+          "8": 0.7,
+          "9": 0.7,
+          "10": 0.7,
+          "11": 0.7,
+          "13": 0.7,
+          "14": 0.7,
+          "15": 0.7,
+          "16": 0.7,
+          "17": 0.7,
+          "18": 0.7,
+          "19": 0.7
+        },
+        "propensity_mean": 0.7,
+        "propensity_min": 0.7,
+        "ipw_weight_max_ratio": 3.7051282051282053,
+        "ipw_weight_ess": 14.805300827748086
+      }
+    },
+    {
+      "round": 5,
+      "acc_global": 0.09359605911330049,
+      "acc_drift_cohort": 0.09333333333333334,
+      "acc_stable_cohort": 0.09369676320272573,
+      "acc_client_mean": 0.10100759516922661,
+      "acc_client_std": 0.06745065952440968,
+      "acc_worst_client": 0.0,
+      "acc_clean": 0.08866995073891626,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 15,
+      "expected_dropout_rate": 0.3,
+      "realized_dropout_rate": 0.25,
+      "realized_rho": 0.5416380209312761,
+      "realized_rho_true": 0.3779644730092271,
+      "corr_Dmodel_Dtrue": -0.17161954352611541,
+      "corr_Dindep_Dtrue": 0.6319016622112711,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 3,
+      "elapsed_sec": 140.8,
+      "method_log": {
+        "propensity": {
+          "0": 0.566385,
+          "1": 0.866112,
+          "2": 0.866112,
+          "3": 0.866112,
+          "4": 0.456991,
+          "6": 0.866112,
+          "7": 0.866112,
+          "9": 0.866112,
+          "11": 0.866112,
+          "12": 0.365594,
+          "13": 0.866112,
+          "14": 0.866112,
+          "16": 0.866112,
+          "18": 0.866112,
+          "19": 0.866112
+        },
+        "propensity_mean": 0.7854878998697031,
+        "propensity_min": 0.36559365397167976,
+        "ipw_weight_max_ratio": 3.29174316635659,
+        "ipw_weight_ess": 13.121908646020405
+      }
+    },
+    {
+      "round": 10,
+      "acc_global": 0.20812807881773399,
+      "acc_drift_cohort": 0.27555555555555555,
+      "acc_stable_cohort": 0.18228279386712096,
+      "acc_client_mean": 0.20956893035153112,
+      "acc_client_std": 0.11202610678163413,
+      "acc_worst_client": 0.0,
+      "acc_clean": 0.18719211822660098,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 14,
+      "expected_dropout_rate": 0.29999999999999993,
+      "realized_dropout_rate": 0.30000000000000004,
+      "realized_rho": 0.10699703409970154,
+      "realized_rho_true": 0.5238095238095238,
+      "corr_Dmodel_Dtrue": -0.020955127797804392,
+      "corr_Dindep_Dtrue": 0.6454362570231638,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 2,
+      "elapsed_sec": 793.6,
+      "method_log": {
+        "propensity": {
+          "1": 0.870697,
+          "2": 0.870697,
+          "3": 0.870697,
+          "5": 0.05,
+          "7": 0.870697,
+          "9": 0.870697,
+          "10": 0.358794,
+          "11": 0.870697,
+          "13": 0.870697,
+          "14": 0.870697,
+          "15": 0.870697,
+          "17": 0.870697,
+          "18": 0.870697,
+          "19": 0.870697
+        },
+        "propensity_mean": 0.7755115554785483,
+        "propensity_min": 0.050000000000000044,
+        "ipw_weight_max_ratio": 25.662658260491302,
+        "ipw_weight_ess": 4.017091792699796
+      }
+    },
+    {
+      "round": 15,
+      "acc_global": 0.5233990147783252,
+      "acc_drift_cohort": 0.5688888888888889,
+      "acc_stable_cohort": 0.5059625212947189,
+      "acc_client_mean": 0.5136233292197121,
+      "acc_client_std": 0.1399473925692151,
+      "acc_worst_client": 0.24242424242424243,
+      "acc_clean": 0.4827586206896552,
+      "n_test_global": 812,
+      "n_test_drift_cohort": 225,
+      "n_participants": 12,
+      "expected_dropout_rate": 0.3,
+      "realized_dropout_rate": 0.4,
+      "realized_rho": 0.40325903361111354,
+      "realized_rho_true": 0.3563483225498994,
+      "corr_Dmodel_Dtrue": -0.08177538674211779,
+      "corr_Dindep_Dtrue": 0.6318937535502701,
+      "n_drifting_total": 6,
+      "n_drifting_participated": 2,
+      "elapsed_sec": 921.6,
+      "method_log": {
+        "propensity": {
+          "1": 0.863977,
+          "2": 0.863977,
+          "3": 0.863977,
+          "4": 0.504879,
+          "6": 0.863977,
+          "11": 0.863977,
+          "12": 0.407618,
+          "13": 0.863977,
+          "15": 0.863977,
+          "17": 0.863977,
+          "18": 0.863977,
+          "19": 0.863977
+        },
+        "propensity_mean": 0.7960223668967729,
+        "propensity_min": 0.4076184534426278,
+        "ipw_weight_max_ratio": 3.042105263157895,
+        "ipw_weight_ess": 10.44445465946281
+      }
+    }
+  ],
+  "summary": {
+    "final_acc_global": 0.5233990147783252,
+    "final_acc_drift_cohort": 0.5688888888888889,
+    "final_acc_stable_cohort": 0.5059625212947189,
+    "final_acc_worst_client": 0.24242424242424243,
+    "final_acc_client_std": 0.1399473925692151,
+    "final_acc_clean": 0.4827586206896552,
+    "mean_expected_dropout_rate": 0.2999999999999999,
+    "mean_realized_dropout_rate": 0.29000000000000004,
+    "near_exclusion_frac": 0.08,
+    "participation_freq_std": 0.232163735324878,
+    "mean_corr_Dmodel_Dtrue": -0.11373438050265278,
+    "mean_corr_Dindep_Dtrue": 0.6389512238770217,
+    "wall_clock_sec": 921.6
+  },
+  "per_client_final": [
+    {
+      "client_id": 0,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 33,
+      "accuracy": 0.45454545454545453,
+      "participation_freq": 0.3333333333333333
+    },
+    {
+      "client_id": 1,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 23,
+      "accuracy": 0.30434782608695654,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 2,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 64,
+      "accuracy": 0.546875,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 3,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 29,
+      "accuracy": 0.5517241379310345,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 4,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 19,
+      "accuracy": 0.42105263157894735,
+      "participation_freq": 0.5333333333333333
+    },
+    {
+      "client_id": 5,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 35,
+      "accuracy": 0.5428571428571428,
+      "participation_freq": 0.26666666666666666
+    },
+    {
+      "client_id": 6,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 30,
+      "accuracy": 0.5666666666666667,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 7,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 34,
+      "accuracy": 0.3235294117647059,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 8,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 36,
+      "accuracy": 0.75,
+      "participation_freq": 0.13333333333333333
+    },
+    {
+      "client_id": 9,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 33,
+      "accuracy": 0.24242424242424243,
+      "participation_freq": 0.6666666666666666
+    },
+    {
+      "client_id": 10,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 70,
+      "accuracy": 0.5571428571428572,
+      "participation_freq": 0.6
+    },
+    {
+      "client_id": 11,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 36,
+      "accuracy": 0.3611111111111111,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 12,
+      "drift_cohort": true,
+      "d_true": 1.0,
+      "n_test": 32,
+      "accuracy": 0.625,
+      "participation_freq": 0.5333333333333333
+    },
+    {
+      "client_id": 13,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 72,
+      "accuracy": 0.5,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 14,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 32,
+      "accuracy": 0.78125,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 15,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 69,
+      "accuracy": 0.5652173913043478,
+      "participation_freq": 0.8
+    },
+    {
+      "client_id": 16,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 34,
+      "accuracy": 0.5,
+      "participation_freq": 0.7333333333333333
+    },
+    {
+      "client_id": 17,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 33,
+      "accuracy": 0.42424242424242425,
+      "participation_freq": 0.8666666666666667
+    },
+    {
+      "client_id": 18,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 36,
+      "accuracy": 0.7222222222222222,
+      "participation_freq": 0.9333333333333333
+    },
+    {
+      "client_id": 19,
+      "drift_cohort": false,
+      "d_true": 0.0,
+      "n_test": 62,
+      "accuracy": 0.532258064516129,
+      "participation_freq": 0.8666666666666667
+    }
+  ]
+}

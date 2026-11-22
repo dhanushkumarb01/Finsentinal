@@ -1,0 +1,11 @@
+a,b,cells,b_better,mean_of_diffs,ci_excludes_zero_pos,ci_excludes_zero_neg,practically_important
+fedavg,feddrift,10,6,0.016705347620740437,5,0,5
+fedavg,fedipw_estimated,10,2,-0.008552257376466402,0,3,7
+fedavg,fedipw_oracle,10,4,-0.002872124320755692,1,3,5
+fedavg,flfdms,10,6,0.010921360012188306,2,2,6
+fedipw_estimated,feddrift,10,8,0.02525760499720684,7,1,8
+fedipw_estimated,fedipw_oracle,10,8,0.005680133055710709,3,2,6
+fedipw_estimated,flfdms,10,8,0.019473617388654708,4,0,4
+fedipw_oracle,feddrift,10,8,0.01957747194149613,6,1,7
+fedipw_oracle,flfdms,10,7,0.013793484332943997,3,2,6
+flfdms,feddrift,10,5,0.005783987608552132,5,2,9

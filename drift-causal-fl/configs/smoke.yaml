@@ -1,0 +1,23 @@
+# Reduced end-to-end smoke sweep (spec Part 15, Day 7): all mechanisms x 3 beta
+# levels x all 5 methods x 2 seeds x both drift definitions, at reduced scale
+# (20 clients, 15 rounds). Purpose: pipeline correctness, NOT results.
+study: smoke
+expected_total_runs: 100
+data: {dataset: femnist, n_clients: 20, n_reserve: 6, reserve_seed_offset: 10000}
+drift: {mode: label_shift, fraction: 0.3, start_round: 4, ramp_rounds: 4}
+training: {rounds: 15, local_epochs: 1, lr: 0.03, batch_size: 10, eval_every: 5}
+participation: {target_rate: 0.3, gamma: 2.0, threshold_exclude_frac: 0.2, model_relative_ema_decay: 0.7}
+conditions:
+  - {mechanism: mcar}
+  - {mechanism: mar}
+  - {mechanism: mnar, beta: 1}
+  - {mechanism: mnar, beta: 4}
+  - {mechanism: mnar, beta: 8}
+methods:
+  - {name: fedavg}
+  - {name: fedipw_oracle}
+  - {name: fedipw_estimated}
+  - {name: flfdms}
+  - {name: feddrift, kwargs: {delta: 0.04, max_models: 10}}
+seeds: [0, 1]
+drift_estimators: [model_relative, model_independent]

@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 
 @dataclass
@@ -45,6 +45,33 @@ def _to_client_split(x: np.ndarray, y: np.ndarray, test_frac: float = 0.2, seed:
     n_test = max(1, int(n * test_frac))
     test_idx, train_idx = idx[:n_test], idx[n_test:]
     return train_idx, test_idx
+
+
+FEMNIST_NUM_CLASSES = 62  # digits (10) + upper (26) + lower (26)
+
+
+def _femnist_num_classes(fds) -> int:
+    """Class count from the dataset's own `character` ClassLabel schema (62
+    for flwrlabs/femnist), NOT from whichever labels a sampled subset of
+    writers happens to contain."""
+    feat = fds.load_partition(0).features["character"]
+    n = int(getattr(feat, "num_classes", FEMNIST_NUM_CLASSES))
+    if n != FEMNIST_NUM_CLASSES:
+        raise ValueError(f"unexpected FEMNIST class count {n} (expected {FEMNIST_NUM_CLASSES})")
+    return n
+
+
+def validate_labels(clients: list[ClientData], num_classes: int, what: str = "clients") -> None:
+    """Every train/test label must index a valid output unit of the model —
+    otherwise CrossEntropyLoss raises (or, worse, silently mis-indexes on
+    some backends)."""
+    for c in clients:
+        for split, y in (("train", c.train_y), ("test", c.test_y)):
+            if len(y) and (int(y.min()) < 0 or int(y.max()) >= num_classes):
+                raise ValueError(
+                    f"{what}: client {c.client_id} {split} labels span [{int(y.min())}, {int(y.max())}], "
+                    f"outside [0, {num_classes})"
+                )
 
 
 def load_femnist_clients(num_clients: int = 100, seed: int = 0) -> tuple[list[ClientData], int, str]:
@@ -81,7 +108,12 @@ def load_femnist_clients(num_clients: int = 100, seed: int = 0) -> tuple[list[Cl
                 test_y=y[test_idx],
             )
         )
-    num_classes = int(max(c.train_y.max().item() for c in clients if len(c.train_y) > 0)) + 1
+    # BUG FIX: num_classes used to be max(label seen in the sampled clients' TRAIN
+    # splits) + 1. A subset of writers that never wrote the last class(es) ('y',
+    # 'z') produced a model with < 62 outputs, and any test sample or drift-source
+    # (reserve-pool) sample carrying such a label then crashed CrossEntropyLoss.
+    num_classes = _femnist_num_classes(fds)
+    validate_labels(clients, num_classes, "FEMNIST clients")
     return clients, num_classes, "FEMNIST (real, writer-partitioned)"
 
 
@@ -98,6 +130,13 @@ def load_femnist_reserve_pool(
     is what fixes the rotation confound found in Day 5 (PROGRESS.md):
     the samples used to simulate drift are always real, natural FEMNIST
     handwriting, never artificially distorted.
+
+    Each reserve writer is split 80/20 into train/test (same splitter as the
+    main clients). Drift injection into a client's TRAINING data only ever
+    draws from the reserve writer's train split; the held-out test split is
+    used only to build that client's drifted TEST set (see
+    injection.apply_drift_to_test). The two never overlap, so drifted
+    evaluation never scores the model on samples it trained on.
     """
     from flwr_datasets import FederatedDataset
     from flwr_datasets.partitioner import NaturalIdPartitioner
@@ -122,7 +161,11 @@ def load_femnist_reserve_pool(
         labels = np.array(part["character"], dtype=np.int64)
         x = torch.tensor(imgs).unsqueeze(1)
         y = torch.tensor(labels)
-        reserve.append(ClientData(client_id=-(rid + 1), train_x=x, train_y=y, test_x=x[:0], test_y=y[:0]))
+        train_idx, test_idx = _to_client_split(imgs, labels, seed=seed + rid)
+        reserve.append(
+            ClientData(client_id=-(rid + 1), train_x=x[train_idx], train_y=y[train_idx], test_x=x[test_idx], test_y=y[test_idx])
+        )
+    validate_labels(reserve, _femnist_num_classes(fds), "FEMNIST reserve pool")
     return reserve
 
 
@@ -174,6 +217,10 @@ def load_clients(num_clients: int = 100, seed: int = 0, prefer_femnist: bool = T
             clients, num_classes, name = load_femnist_clients(num_clients, seed)
             print(f"[data] Loaded dataset: {name} ({len(clients)} clients, {num_classes} classes)")
             return clients, num_classes, name
+        except ValueError:
+            # Data-integrity failures (e.g. invalid labels) must never be
+            # papered over by silently switching datasets.
+            raise
         except Exception as e:  # noqa: BLE001
             print(f"[data] FEMNIST not available yet ({type(e).__name__}: {e}) — falling back to MNIST smoke test.")
 

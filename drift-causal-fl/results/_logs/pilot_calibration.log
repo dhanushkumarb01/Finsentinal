@@ -1,0 +1,39 @@
+[sweep] 1 runs, 1 workers x 4 threads -> C:\Users\Dhanush\drift-causal-fl\drift-causal-fl\results\pilot_calibration
+[mcar/feddrift r  1/100] acc=0.0596 drift=0.0586 stable=0.0601 clean=0.0596  part=78/100 rho=+0.000  drifting_part=0/0 models=1
+[mcar/feddrift r  5/100] acc=0.1357 drift=0.1150 stable=0.1451 clean=0.1357  part=63/100 rho=+0.042  drifting_part=0/0 models=1
+[mcar/feddrift r 10/100] acc=0.1536 drift=0.1363 stable=0.1616 clean=0.1536  part=71/100 rho=+0.010  drifting_part=0/0 models=1
+[mcar/feddrift r 15/100] acc=0.5292 drift=0.5011 stable=0.5422 clean=0.5292  part=69/100 rho=-0.002  drifting_part=0/0 models=1
+[mcar/feddrift r 20/100] acc=0.6647 drift=0.6462 stable=0.6732 clean=0.6651  part=71/100 rho=-0.165  drifting_part=19/30 models=1
+[mcar/feddrift r 25/100] acc=0.7301 drift=0.7179 stable=0.7356 clean=0.7282  part=77/100 rho=+0.135  drifting_part=22/30 models=1
+[mcar/feddrift r 30/100] acc=0.7540 drift=0.7487 stable=0.7565 clean=0.7485  part=68/100 rho=-0.179  drifting_part=20/30 models=1
+[mcar/feddrift r 35/100] acc=0.7752 drift=0.7788 stable=0.7736 clean=0.7692  part=69/100 rho=+0.002  drifting_part=18/30 models=1
+[mcar/feddrift r 40/100] acc=0.7835 drift=0.7861 stable=0.7823 clean=0.7798  part=72/100 rho=-0.024  drifting_part=24/30 models=1
+[mcar/feddrift r 45/100] acc=0.7932 drift=0.8000 stable=0.7901 clean=0.7897  part=83/100 rho=+0.124  drifting_part=28/30 models=1
+[mcar/feddrift r 50/100] acc=0.7971 drift=0.7934 stable=0.7988 clean=0.7973  part=78/100 rho=+0.137  drifting_part=25/30 models=1
+[mcar/feddrift r 55/100] acc=0.8054 drift=0.8132 stable=0.8018 clean=0.8017  part=69/100 rho=-0.143  drifting_part=23/30 models=1
+[mcar/feddrift r 60/100] acc=0.8125 drift=0.8154 stable=0.8112 clean=0.8088  part=68/100 rho=-0.121  drifting_part=21/30 models=1
+[mcar/feddrift r 65/100] acc=0.8116 drift=0.8212 stable=0.8072 clean=0.8068  part=64/100 rho=+0.095  drifting_part=19/30 models=1
+[mcar/feddrift r 70/100] acc=0.8114 drift=0.8059 stable=0.8139 clean=0.8132  part=70/100 rho=-0.009  drifting_part=20/30 models=1
+[mcar/feddrift r 75/100] acc=0.8158 drift=0.8176 stable=0.8149 clean=0.8146  part=71/100 rho=+0.174  drifting_part=22/30 models=1
+[mcar/feddrift r 80/100] acc=0.8155 drift=0.8286 stable=0.8095 clean=0.8116  part=71/100 rho=-0.079  drifting_part=21/30 models=1
+[mcar/feddrift r 85/100] acc=0.8257 drift=0.8476 stable=0.8156 clean=0.8167  part=65/100 rho=+0.179  drifting_part=20/30 models=1
+[mcar/feddrift r 90/100] acc=0.8268 drift=0.8366 stable=0.8223 clean=0.8234  part=72/100 rho=-0.029  drifting_part=20/30 models=1
+[mcar/feddrift r 95/100] acc=0.8199 drift=0.8110 stable=0.8240 clean=0.8197  part=76/100 rho=+0.047  drifting_part=20/30 models=1
+[mcar/feddrift r100/100] acc=0.8254 drift=0.8264 stable=0.8250 clean=0.8231  part=68/100 rho=+0.072  drifting_part=21/30 models=1
+[w0] s100__mrel__mcar__feddrift: done in 35766s
+{
+  "planned": 1,
+  "counts": {
+    "done": 1
+  },
+  "failed": [],
+  "interrupted": [],
+  "stale_lock": [],
+  "recovered_or_rerun": [],
+  "run_duration_sec": {
+    "n": 1,
+    "mean": 35766.0,
+    "total": 35766.0
+  },
+  "sweep_wall_clock_sec": 35774.0
+}

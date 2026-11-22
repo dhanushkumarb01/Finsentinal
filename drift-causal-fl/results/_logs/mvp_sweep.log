@@ -1,0 +1,11 @@
+[sweep] 350 runs, 4 workers x 1 threads, caps={'flfdms': 1} -> C:\Users\Dhanush\drift-causal-fl\drift-causal-fl\results\mvp
+[w0] s0__mrel__mcar__fedavg: done in 58265s
+[w1] s0__mrel__mcar__fedipw_oracle: done in 58409s
+[w2] s0__mrel__mcar__fedipw_estimated: done in 58410s
+[w3] s0__mrel__mcar__flfdms: done in 58843s
+[w2] s0__mrel__mar__fedipw_oracle: done in 65381s
+[w1] s0__mrel__mar__fedavg: done in 65455s
+[w3] s0__mrel__mar__fedipw_estimated: done in 65748s
+[w2] s0__mrel__mar__flfdms: done in 56243s
+[w3] s0__mrel__mnar_b0.5__fedavg: done in 56061s
+[w0] s0__mrel__mcar__feddrift: done in 141191s
