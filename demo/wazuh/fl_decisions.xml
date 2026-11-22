@@ -76,8 +76,10 @@
 
   <!-- ══ FL-LEVEL EVENTS FROM THE DEMO COORDINATOR (source = fl-coordinator) ══ -->
 
+  <!-- Child of Wazuh's JSON parent rule 86600 (as FinSentinel's 100100 is): a top-level rule would lose to
+       86600, which matches every JSON event that has a timestamp (verified with wazuh-logtest). -->
   <rule id="100250" level="0">
-    <decoded_as>json</decoded_as>
+    <if_sid>86600</if_sid>
     <field name="source">^fl-coordinator$</field>
     <description>FL coordinator event</description>
     <group>fl_coordinator,</group>

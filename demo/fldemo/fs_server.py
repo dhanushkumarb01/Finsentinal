@@ -70,6 +70,22 @@ def main() -> None:
     print(f"[finsentinel] schema {MODEL_VERSION} + {len(json.loads(REGISTRY_FILE.read_text()))} keys registered",
           flush=True)
 
+    # Real-time audit delivery for the demo. FinSentinel's OutboxDeliveryWorker defaults to a 60 s idle
+    # sleep (fine for a SIEM feed, too slow when Wazuh must decide within a round: measured 42-49 s
+    # event->Wazuh latency). Its constructor accepts the timings but no env var exposes them, so the
+    # demo's FinSentinel process swaps in a subclass with real-time settings. FinSentinel's files are
+    # not modified; its app imports the class at startup, after this override.
+    import audit.worker as _aw
+
+    class RealtimeOutboxDeliveryWorker(_aw.OutboxDeliveryWorker):
+        def __init__(self, **kw):
+            kw.setdefault("idle_sleep_seconds", 0.5)
+            kw.setdefault("active_sleep_seconds", 0.1)
+            kw.setdefault("max_events_per_batch", 200)
+            super().__init__(**kw)
+
+    _aw.OutboxDeliveryWorker = RealtimeOutboxDeliveryWorker
+
     import uvicorn
 
     from app.main import app

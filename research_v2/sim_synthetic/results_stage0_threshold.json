@@ -1,0 +1,315 @@
+{
+ "design": {
+  "N": 100,
+  "d": 20,
+  "T": 40,
+  "n_drift": 30,
+  "onset": 10,
+  "ramp": 5,
+  "lr": 0.5,
+  "noise": 0.05,
+  "het": 0.3,
+  "shift": 3.0,
+  "s_noise": 0.3,
+  "W": 5,
+  "alpha_gate": 0.01,
+  "kappa": 1.0,
+  "rho_max": 10.0,
+  "target_miss": 0.3,
+  "reps": 200
+ },
+ "seconds": 158.9,
+ "cells": [
+  {
+   "mech": "threshold",
+   "beta": 0.0,
+   "rho": 0.5,
+   "reps": 200,
+   "methods": {
+    "fedavg": {
+     "bias_norm_post": 0.01303003157060598,
+     "rmse_post": 0.2642432314849105,
+     "final_dist_mean": 0.5228958071639493,
+     "final_dist_se": 0.002006718344868389,
+     "cohort_gap_mean": 2.4734961811822207,
+     "cohort_gap_se": 0.012711013266085033
+    },
+    "ipw_oracle_ht": {
+     "bias_norm_post": 0.010524404979215495,
+     "rmse_post": 0.21279919934234576,
+     "final_dist_mean": 0.5224034270170055,
+     "final_dist_se": 0.0018032269833608801,
+     "cohort_gap_mean": 2.4724660145051005,
+     "cohort_gap_se": 0.01174688818168396
+    },
+    "ipw_oracle_hajek": {
+     "bias_norm_post": 0.01303003157060598,
+     "rmse_post": 0.2642432314849105,
+     "final_dist_mean": 0.5228958071639493,
+     "final_dist_se": 0.0020067183448683893,
+     "cohort_gap_mean": 2.4734961811822207,
+     "cohort_gap_se": 0.012711013266085036
+    },
+    "ipw_ema": {
+     "bias_norm_post": 0.011319845571238631,
+     "rmse_post": 0.1665226608118165,
+     "final_dist_mean": 0.23250585763290593,
+     "final_dist_se": 0.007032075504264428,
+     "cohort_gap_mean": -0.7217968357566875,
+     "cohort_gap_se": 0.03165735070749497
+    },
+    "fdms_sub": {
+     "bias_norm_post": 0.007817370833201212,
+     "rmse_post": 0.13988998572556496,
+     "final_dist_mean": 0.17607704474494187,
+     "final_dist_se": 0.003329520755287684,
+     "cohort_gap_mean": 0.6492962737446177,
+     "cohort_gap_se": 0.018447435949471264
+    },
+    "lag_mar": {
+     "bias_norm_post": 0.00834980655768557,
+     "rmse_post": 0.16291484716771076,
+     "final_dist_mean": 0.2465744313901732,
+     "final_dist_se": 0.0036808257890437023,
+     "cohort_gap_mean": 1.0628843777316896,
+     "cohort_gap_se": 0.018535778990256133
+    },
+    "dsdr": {
+     "bias_norm_post": 0.00648555272084472,
+     "rmse_post": 0.10115968486486261,
+     "final_dist_mean": 0.10791784885818326,
+     "final_dist_se": 0.0018586601139889646,
+     "cohort_gap_mean": 0.13760307838756858,
+     "cohort_gap_se": 0.018261638588338444
+    },
+    "dsdr_ipw": {
+     "bias_norm_post": 0.00939385351989575,
+     "rmse_post": 0.1479275175153809,
+     "final_dist_mean": 0.12353417762156516,
+     "final_dist_se": 0.00452859762966622,
+     "cohort_gap_mean": 0.1509038741767597,
+     "cohort_gap_se": 0.02893734260280797
+    },
+    "dsdr_nogate": {
+     "bias_norm_post": 0.006417517818059997,
+     "rmse_post": 0.0995533442803039,
+     "final_dist_mean": 0.10811655534961888,
+     "final_dist_se": 0.0018652636383507135,
+     "cohort_gap_mean": 0.13594024963794454,
+     "cohort_gap_se": 0.01840693753590312
+    },
+    "dsdr_oraclepi": {
+     "bias_norm_post": 0.010942042145248791,
+     "rmse_post": 0.2206152089033615,
+     "final_dist_mean": 0.4172990615770593,
+     "final_dist_se": 0.002094018911459107,
+     "cohort_gap_mean": 1.922594935901563,
+     "cohort_gap_se": 0.012023744995832055
+    }
+   },
+   "diag": {
+    "corr_gmm": null,
+    "corr_ema": null,
+    "corr_lagmar": null,
+    "lambda": 0.018592835234107985,
+    "theta_eta": -5.519293164567952,
+    "covers": null,
+    "gate_open_rate": 0.85875
+   }
+  },
+  {
+   "mech": "threshold",
+   "beta": 0.0,
+   "rho": 0.9,
+   "reps": 200,
+   "methods": {
+    "fedavg": {
+     "bias_norm_post": 0.018791268298356704,
+     "rmse_post": 0.2650350529348336,
+     "final_dist_mean": 0.5232386027259803,
+     "final_dist_se": 0.0022347782511091636,
+     "cohort_gap_mean": 2.4730746691296277,
+     "cohort_gap_se": 0.013584564695864424
+    },
+    "ipw_oracle_ht": {
+     "bias_norm_post": 0.015155011255704232,
+     "rmse_post": 0.2137562877327829,
+     "final_dist_mean": 0.5226671703946097,
+     "final_dist_se": 0.002014464795202474,
+     "cohort_gap_mean": 2.471475565871167,
+     "cohort_gap_se": 0.012493564339378555
+    },
+    "ipw_oracle_hajek": {
+     "bias_norm_post": 0.018791268298356704,
+     "rmse_post": 0.2650350529348336,
+     "final_dist_mean": 0.5232386027259803,
+     "final_dist_se": 0.002234778251109163,
+     "cohort_gap_mean": 2.4730746691296277,
+     "cohort_gap_se": 0.013584564695864422
+    },
+    "ipw_ema": {
+     "bias_norm_post": 0.012421272254865052,
+     "rmse_post": 0.17819374276291916,
+     "final_dist_mean": 0.194565666959085,
+     "final_dist_se": 0.005020916001301452,
+     "cohort_gap_mean": 0.15441245895633066,
+     "cohort_gap_se": 0.047735607913053466
+    },
+    "fdms_sub": {
+     "bias_norm_post": 0.011456429040831263,
+     "rmse_post": 0.17238441447732747,
+     "final_dist_mean": 0.20225219762869667,
+     "final_dist_se": 0.004352655545934094,
+     "cohort_gap_mean": 0.7570406659248547,
+     "cohort_gap_se": 0.024400185898449857
+    },
+    "lag_mar": {
+     "bias_norm_post": 0.012654630195810925,
+     "rmse_post": 0.18041880922592476,
+     "final_dist_mean": 0.2968667134718257,
+     "final_dist_se": 0.0039765834883552995,
+     "cohort_gap_mean": 1.3036721118944035,
+     "cohort_gap_se": 0.020563963114917674
+    },
+    "dsdr": {
+     "bias_norm_post": 0.010435444751787995,
+     "rmse_post": 0.15203045638849952,
+     "final_dist_mean": 0.18897585141435513,
+     "final_dist_se": 0.004082746191334949,
+     "cohort_gap_mean": 0.7224428264134339,
+     "cohort_gap_se": 0.0242661643114546
+    },
+    "dsdr_ipw": {
+     "bias_norm_post": 0.010838352896201662,
+     "rmse_post": 0.15849867578302923,
+     "final_dist_mean": 0.20336649995323414,
+     "final_dist_se": 0.004595686826409184,
+     "cohort_gap_mean": 0.7949790965476605,
+     "cohort_gap_se": 0.027362497772113054
+    },
+    "dsdr_nogate": {
+     "bias_norm_post": 0.01043410903923055,
+     "rmse_post": 0.15182917438834473,
+     "final_dist_mean": 0.18898625538921734,
+     "final_dist_se": 0.004081994734319754,
+     "cohort_gap_mean": 0.7223098812847278,
+     "cohort_gap_se": 0.024290336001651328
+    },
+    "dsdr_oraclepi": {
+     "bias_norm_post": 0.0162461889542793,
+     "rmse_post": 0.2300875812748659,
+     "final_dist_mean": 0.4227995102646709,
+     "final_dist_se": 0.002589866192587015,
+     "cohort_gap_mean": 1.9466343061381162,
+     "cohort_gap_se": 0.014314247737542248
+    }
+   },
+   "diag": {
+    "corr_gmm": null,
+    "corr_ema": null,
+    "corr_lagmar": null,
+    "lambda": 0.0004201293790519778,
+    "theta_eta": -2.9276831847896903,
+    "covers": null,
+    "gate_open_rate": 0.91675
+   }
+  },
+  {
+   "mech": "threshold",
+   "beta": 0.0,
+   "rho": 0.99,
+   "reps": 200,
+   "methods": {
+    "fedavg": {
+     "bias_norm_post": 0.023633015633179,
+     "rmse_post": 0.26501033866616774,
+     "final_dist_mean": 0.5285187701171506,
+     "final_dist_se": 0.002382671083508977,
+     "cohort_gap_mean": 2.5001619444936294,
+     "cohort_gap_se": 0.014324985356375637
+    },
+    "ipw_oracle_ht": {
+     "bias_norm_post": 0.01907371608846962,
+     "rmse_post": 0.21374191660329403,
+     "final_dist_mean": 0.527704682162699,
+     "final_dist_se": 0.0021502814412749883,
+     "cohort_gap_mean": 2.4969245872869568,
+     "cohort_gap_se": 0.013263995154774699
+    },
+    "ipw_oracle_hajek": {
+     "bias_norm_post": 0.023633015633178992,
+     "rmse_post": 0.26501033866616774,
+     "final_dist_mean": 0.5285187701171505,
+     "final_dist_se": 0.002382671083508977,
+     "cohort_gap_mean": 2.5001619444936294,
+     "cohort_gap_se": 0.014324985356375634
+    },
+    "ipw_ema": {
+     "bias_norm_post": 0.019359723630924877,
+     "rmse_post": 0.22655470719775175,
+     "final_dist_mean": 0.3688414672308263,
+     "final_dist_se": 0.007385900183278765,
+     "cohort_gap_mean": 1.6197842804008458,
+     "cohort_gap_se": 0.04309444716044403
+    },
+    "fdms_sub": {
+     "bias_norm_post": 0.021531206405287225,
+     "rmse_post": 0.24205995316925133,
+     "final_dist_mean": 0.4268039448977878,
+     "final_dist_se": 0.00404988431649661,
+     "cohort_gap_mean": 1.942631213168931,
+     "cohort_gap_se": 0.02203244068593058
+    },
+    "lag_mar": {
+     "bias_norm_post": 0.018612407057070252,
+     "rmse_post": 0.21257274965061987,
+     "final_dist_mean": 0.41122559657034313,
+     "final_dist_se": 0.0034153421833577227,
+     "cohort_gap_mean": 1.883917272422432,
+     "cohort_gap_se": 0.01841077228731943
+    },
+    "dsdr": {
+     "bias_norm_post": 0.019216743092911773,
+     "rmse_post": 0.2189014627033573,
+     "final_dist_mean": 0.4030512145757879,
+     "final_dist_se": 0.0034325107693136143,
+     "cohort_gap_mean": 1.8418081600450464,
+     "cohort_gap_se": 0.018522587437613168
+    },
+    "dsdr_ipw": {
+     "bias_norm_post": 0.018845802623502283,
+     "rmse_post": 0.21499717170333035,
+     "final_dist_mean": 0.4060880085376328,
+     "final_dist_se": 0.003650476810628667,
+     "cohort_gap_mean": 1.8575970579180483,
+     "cohort_gap_se": 0.019632178813811133
+    },
+    "dsdr_nogate": {
+     "bias_norm_post": 0.019136618698970723,
+     "rmse_post": 0.21818875071818053,
+     "final_dist_mean": 0.4027026455567983,
+     "final_dist_se": 0.0033956365899792335,
+     "cohort_gap_mean": 1.8399690658195964,
+     "cohort_gap_se": 0.018329499377815892
+    },
+    "dsdr_oraclepi": {
+     "bias_norm_post": 0.022630496529110124,
+     "rmse_post": 0.25350482151263354,
+     "final_dist_mean": 0.4864632312214222,
+     "final_dist_se": 0.0025554177879767285,
+     "cohort_gap_mean": 2.2767079508327965,
+     "cohort_gap_se": 0.014850461096223722
+    }
+   },
+   "diag": {
+    "corr_gmm": null,
+    "corr_ema": null,
+    "corr_lagmar": null,
+    "lambda": 0.0,
+    "theta_eta": -1.4125565683636974,
+    "covers": null,
+    "gate_open_rate": 0.892625
+   }
+  }
+ ]
+}

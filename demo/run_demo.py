@@ -243,8 +243,20 @@ class Tunnel(threading.Thread):
 
 
 # =============================================================================== main
+def port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket() as s:
+        s.settimeout(0.5)
+        return s.connect_ex(("127.0.0.1", port)) == 0
+
+
 def preflight(args) -> list[str]:
     problems = []
+    busy = [p for p in ((MC_PORT,) if args.replay else (FS_PORT, COORD_PORT, CADDY_TLS_PORT, MC_PORT))
+            if port_in_use(p)]
+    if busy:
+        problems.append(f"port(s) {busy} already in use — another copy of the demo (or FinSentinel's own dev "
+                        "server on 8000) is running. Stop it first (Ctrl+C in its window).")
     if not (DEMO / ".data" / "extract" / "UCI HAR Dataset").exists():
         problems.append("UCI HAR dataset missing — run: python demo/setup.py")
     if not (MC_DIST / "index.html").exists():
