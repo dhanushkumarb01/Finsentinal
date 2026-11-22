@@ -1,0 +1,16 @@
+# Never commit: environments, data, runtime state, secrets, downloaded tools
+.venv/
+.data/
+.state/
+tools/
+node_modules/
+dist/
+*.pem
+*.key
+.env
+.env.*
+wokwi/**/secrets.h
+recordings/*.jsonl
+!recordings/golden.jsonl
+__pycache__/
+.pytest_cache/
