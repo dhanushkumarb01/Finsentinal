@@ -23,7 +23,7 @@ from fldemo.settings import (  # noqa: E402
 )
 
 
-def build_env(rounds: int) -> dict[str, str]:
+def build_env(rounds: int, *, defer_decisions: bool = False) -> dict[str, str]:
     sec = load_secrets()
     extra = {
         "FINSENTINEL_AUDIT_DELIVERY_WORKER_ENABLED": "1",
@@ -32,6 +32,8 @@ def build_env(rounds: int) -> dict[str, str]:
     }
     if THRESHOLDS_FILE.exists():
         extra.update({k: str(v) for k, v in json.loads(THRESHOLDS_FILE.read_text())["finsentinel_env"].items()})
+    if defer_decisions:  # Wazuh decides: FinSentinel only checks and reports, never quarantines by itself
+        extra["FINSENTINEL_HIGH_RISK_ACTION"] = "pending_approval"
     # +50 spare rounds so a long rehearsal never hits the policy's round allow-list.
     return fs_boot.base_env(operator_token=sec["operator_token"], rounds=rounds + 50, extra=extra)
 
@@ -40,13 +42,14 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--rounds", type=int, default=30)
     ap.add_argument("--fresh", action="store_true", help="delete the demo DB first")
+    ap.add_argument("--defer-decisions", action="store_true", help="Wazuh decides (high-risk -> pending)")
     args = ap.parse_args()
 
     os.chdir(STATE_DIR)  # never pick up a .env from FinSentinel's folder
     if args.fresh:
         for suffix in ("", "-wal", "-shm"):
             Path(str(FS_DB) + suffix).unlink(missing_ok=True)
-    fs_boot.boot(FS_DB, build_env(args.rounds))
+    fs_boot.boot(FS_DB, build_env(args.rounds, defer_decisions=args.defer_decisions))
 
     import torch
 

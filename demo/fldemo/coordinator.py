@@ -140,8 +140,16 @@ class EventBus:
 # =============================================================================== coordinator
 class Coordinator:
     def __init__(self, cfg: RunConfig, *, wazuh: bool = False, record: bool = True,
-                 fs_client: httpx.AsyncClient | None = None, min_devices: int = 0) -> None:
+                 fs_client: httpx.AsyncClient | None = None, min_devices: int = 0,
+                 engine: str = "coordinator", decision_timeout: float = 30.0) -> None:
         self.cfg = cfg
+        self.engine = engine                # "wazuh": Wazuh decides, we enforce | "coordinator": v1 policy
+        self.decision_timeout = decision_timeout
+        self.suspended: dict[str, dict] = {}  # device -> {rule_id, since_round}
+        self.attack_ids: dict[str, str] = {}  # FinSentinel update_id -> attack event id (#replay ...)
+        self.wz = None
+        if cfg.wokwi:  # boards need ~60 s per round on Wokwi: never close a round before 45 s
+            cfg.min_round_seconds = max(cfg.min_round_seconds, 45.0)
         self.min_devices = min_devices
         self.wazuh = wazuh
         self.devices = {d["id"]: d for d in load_devices()}
@@ -205,6 +213,16 @@ class Coordinator:
                       "network": d["network"], "battery": d["battery"]}
                      for d in self.devices.values() if d["kind"] == "virtual" or self.cfg.wokwi],
         )
+        if self.engine == "wazuh":
+            from fldemo.wazuh_engine import DASHBOARD, WazuhEngine
+            self.wz = WazuhEngine(self)
+            self.wz.start()
+            self.bus.emit("decision_engine", engine="wazuh", wazuh_dashboard=DASHBOARD,
+                          detail="Wazuh SIEM rules decide approve / quarantine / reject / suspend in real time; "
+                                 "the coordinator only enforces them through FinSentinel's operator API.")
+        else:
+            self.bus.emit("decision_engine", engine="coordinator",
+                          detail="Wazuh not running: FinSentinel quarantines high risk, the coordinator approves LOW risk.")
         acc, loss = npmodel.loss_acc(self.global_state, self.test_x, self.test_y)[::-1]
         self.bus.emit("global_eval", round=0, accuracy=round(acc, 4), loss=round(loss, 4),
                       per_device_accuracy=self._per_device_acc())
@@ -250,6 +268,7 @@ class Coordinator:
         self.deadline = start + self.cfg.round_seconds
         self.state = "open"
         self.bus.emit("round_started", round=r, deadline=round(self.deadline, 3), model_sha256=sha256_hex(blob))
+        self.bus.emit("round_phase", round=r, phase="open")
         while time.time() < self.deadline:
             await asyncio.sleep(0.5)
             done = set(self.reports[r]) | set(self.skips[r])
@@ -258,7 +277,42 @@ class Coordinator:
                 break
         self.state = "aggregating"
         await asyncio.sleep(self.cfg.grace_seconds)
+        if self.engine == "wazuh":
+            await self._wait_for_decisions(r)
+        self.bus.emit("round_phase", round=r, phase="aggregating")
         await self._aggregate(r)
+
+    def _undecided(self, r: int) -> list[str]:
+        return [rec["device"] for rec in self.reports[r].values()
+                if rec["http_status"] == 200 and rec.get("approval") not in ("approved", "rejected", "quarantined")]
+
+    async def _wait_for_decisions(self, r: int) -> None:
+        """Every accepted update must get a Wazuh decision before aggregation (bounded wait)."""
+        waiting = self._undecided(r)
+        if not waiting:
+            return
+        self.bus.emit("round_phase", round=r, phase="deciding", waiting_for=waiting)
+        t0 = time.time()
+        while self._undecided(r) and time.time() - t0 < self.decision_timeout:
+            await asyncio.sleep(0.3)
+        left = self._undecided(r)
+        if left:
+            self.bus.emit("alert", severity="high", title=f"No Wazuh decision for {', '.join(left)}",
+                          detail=f"Round {r}: no decision within {self.decision_timeout:.0f} s - these updates are "
+                                 "excluded from averaging (nothing is approved without Wazuh).", source="coordinator")
+
+    def suspend(self, device: str, *, rule_id: str) -> None:
+        if device not in self.suspended:
+            self.suspended[device] = {"device": device, "rule_id": rule_id, "since_round": self.round}
+            self.bus.emit("device_status", device=device, state="suspended", round=self.round,
+                          reason=f"wazuh rule {rule_id}", detail="suspended by Wazuh - its updates are rejected")
+
+    def unsuspend(self, device: str) -> bool:
+        if self.suspended.pop(device, None) is None:
+            return False
+        self.bus.emit("device_status", device=device, state="online", round=self.round, reason=None,
+                      detail="suspension lifted by presenter")
+        return True
 
     # ------------------------------------------------------------------ reports & gate
     async def handle_report(self, rep: dict) -> dict:
@@ -281,8 +335,14 @@ class Coordinator:
                "sample_count": int(env["sample_count"]), "http_status": status, "approval": None,
                "body": sub, "t": time.time()}
         self.updates[uid] = rec
-        if r == self.round:
+        if r == self.round and self.state == "open":
             self.reports[r][cid] = rec
+        else:
+            rec["late"] = True
+            self.bus.emit("alert", severity="low", title=f"{cid}: late update for round {r}",
+                          detail=f"{cid}'s round-{r} update arrived after the round closed — it is still "
+                                 "checked by FinSentinel but kept out of averaging.", device=cid,
+                          source="coordinator")
 
         try:
             state = npz_to_state(payload)
@@ -320,25 +380,40 @@ class Coordinator:
                 detail = f"FinSentinel status lookup failed ({st.status_code})"
         checks = gate_checks(status, detail, severity)
         rec["approval"] = approval
+        if self.engine == "wazuh":
+            decided_by = "pending"
+        elif status != 200 or approval == "quarantined" or (approval == "pending_approval" and severity == "LOW"):
+            decided_by = "coordinator"
+        else:
+            decided_by = "human"
         self.bus.emit("gate_result", device=cid, round=rec["round"], update_id=uid, http_status=status,
                       checks=checks, risk_score=risk, severity=severity, approval_status=approval,
-                      reasons=reasons, detail=detail[:300], source=source)
+                      reasons=reasons, detail=detail[:300], source=source, decided_by=decided_by)
         scene = self.attack_watch.get(cid)
         if scene == "poison" and source == "device":
             outcome = "quarantined" if approval == "quarantined" else ("blocked" if status != 200 else "accepted")
             self.bus.emit("attack", scene="poison", phase="result", target=cid, http_status=status,
                           outcome=outcome, detail=f"risk {risk} {severity or ''}: " + "; ".join(reasons)[:200])
             self.attack_watch.pop(cid, None)
+        if self.engine == "wazuh" and cid in self.suspended and approval == "pending_approval":
+            await self.decide(cid, uid, "reject", actor=f"wazuh suspension (rule {self.suspended[cid]['rule_id']})",
+                              reason=f"[actor=wazuh] device suspended by rule {self.suspended[cid]['rule_id']}")
+            return
+        if self.engine == "wazuh":
+            if self.wz:
+                for d in self.wz.on_gate(rec):   # Wazuh decided before this report arrived
+                    await self.wz.apply(d)
+            return
         if approval == "quarantined":
             self.bus.emit("approval", device=cid, round=rec["round"], update_id=uid, decision="quarantined",
                           actor="finsentinel (risk policy)", reason="; ".join(reasons)[:300] or detail)
-        elif approval == "pending_approval" and severity == "LOW":
+        elif approval == "pending_approval" and severity == "LOW" and not rec.get("late"):
             await self.decide(cid, uid, "approve",
                               actor="demo-coordinator",
                               reason="[actor=demo-coordinator] assisted approval: LOW risk, all ingestion checks passed")
 
     async def decide(self, cid: str, uid: str, decision: str, *, actor: str, reason: str) -> dict:
-        path = {"approve": "approve", "reject": "reject"}[decision]
+        path = {"approve": "approve", "reject": "reject", "quarantine": "quarantine"}[decision]
         resp = await self.fs.post(f"/api/v1/updates/{cid}/{uid}/{path}", headers=self.op_headers,
                                   json={"reason": reason})
         if resp.status_code != 200:
@@ -347,10 +422,12 @@ class Coordinator:
                           device=cid, source="coordinator")
             return {"ok": False, "status": resp.status_code}
         rec = self.updates.get(uid)
+        final = {"approve": "approved", "reject": "rejected", "quarantine": "quarantined"}[decision]
         if rec:
-            rec["approval"] = "approved" if decision == "approve" else "rejected"
+            rec["approval"] = final
+            rec["decided_by"] = actor
         self.bus.emit("approval", device=cid, round=rec["round"] if rec else self.round, update_id=uid,
-                      decision="approved" if decision == "approve" else "rejected", actor=actor, reason=reason)
+                      decision=final, actor=actor, reason=reason)
         return {"ok": True}
 
     # ------------------------------------------------------------------ aggregation
@@ -422,6 +499,11 @@ class Coordinator:
             self.device_state[cid]["online"] = True
         if cur != {k: prev.get(k) for k in cur}:
             self.bus.emit("device_status", device=cid, **cur)
+        if self.engine == "wazuh" and st.get("state") in ("skipped", "error") and st.get("reason") in ("drift", "tls_error"):
+            from fldemo.wazuh_engine import write_siem_event
+            write_siem_event("fl.drift_dropout" if st["reason"] == "drift" else "fl.tls_error",
+                             severity="low" if st["reason"] == "drift" else "medium", client_id=cid,
+                             description=str(st.get("detail") or ""), round=st.get("round"))
         if self.attack_watch.get(cid) == "drift" and st.get("reason") == "drift":
             self.bus.emit("attack", scene="drift", phase="result", target=cid, outcome="observed",
                           detail=f"{cid} skipped round {st.get('round')} because its own data drifted "
@@ -439,13 +521,38 @@ class Coordinator:
             self.bus.emit("alert", severity=sev if sev in ("low", "medium", "high", "critical") else "info",
                           title=audit_title(et), detail=str(payload.get("description", ""))[:300],
                           device=payload.get("client_id") or None, source="finsentinel", event_type=et)
-        if self.wazuh:
+        if self.wazuh or self.engine == "wazuh":
             try:
                 async with httpx.AsyncClient(timeout=5) as c:
                     await c.post(f"http://127.0.0.1:{FORWARDER_PORT}/ingest", json=payload,
                                  headers={"Authorization": f"Bearer {self.secrets['forwarder_token']}"})
             except httpx.HTTPError:
                 pass
+
+    # ------------------------------------------------------------------ security console (one UI)
+    async def console(self) -> dict:
+        async def fs_get(path: str):
+            try:
+                r = await self.fs.get(path, headers=self.op_headers)
+                return r.json() if r.status_code == 200 else {"error": r.status_code}
+            except (httpx.HTTPError, ValueError) as exc:
+                return {"error": type(exc).__name__}
+        dash, pending = await asyncio.gather(fs_get("/api/v1/operator/dashboard"), fs_get("/api/v1/updates/pending"))
+        thresholds = json.loads(THRESHOLDS_FILE.read_text())["finsentinel_env"] if THRESHOLDS_FILE.exists() else {}
+        decisions = {e["update_id"]: e for e in self.bus.events if e["type"] == "wazuh_decision" and e.get("update_id")}
+        rows = []
+        for rec in sorted(self.updates.values(), key=lambda r: r["t"], reverse=True)[:300]:
+            wd = decisions.get(rec["update_id"], {})
+            rows.append({"update_id": rec["update_id"], "device": rec["device"], "round": rec["round"],
+                         "http_status": rec["http_status"], "finsentinel_status": rec.get("approval"),
+                         "decision": wd.get("decision") or rec.get("approval"),
+                         "decided_by": rec.get("decided_by") or ("pending" if self.engine == "wazuh" else None),
+                         "rule_id": wd.get("rule_id"), "late": bool(rec.get("late")), "t": rec["t"]})
+        return {"decision_engine": self.engine,
+                "wazuh": self.wz.status() if self.wz else {"up": False, "decisions": 0, "last_decision_t": None,
+                                                            "dashboard_url": None},
+                "finsentinel": dash, "pending": pending.get("updates", pending) if isinstance(pending, dict) else pending,
+                "suspended": list(self.suspended.values()), "thresholds": thresholds, "updates": rows}
 
     # ------------------------------------------------------------------ tunnel beacon
     async def set_tunnel(self, url: str | None) -> None:
@@ -581,6 +688,16 @@ def create_app(coord: Coordinator, *, autostart: bool = True) -> FastAPI:
         coord.bus.emit("component", name=b["name"], status=b["status"], detail=b.get("detail"))
         return {"ok": True}
 
+    @app.get("/fl/admin/console")
+    async def console(request: Request) -> dict:
+        admin(request)
+        return await coord.console()
+
+    @app.post("/fl/admin/unsuspend")
+    async def unsuspend(request: Request) -> dict:
+        admin(request)
+        return {"ok": coord.unsuspend((await request.json()).get("device", ""))}
+
     @app.post("/fl/internal/audit")
     async def audit(request: Request) -> dict:
         if request.headers.get("authorization", "") != f"Bearer {sec['webhook_token']}":
@@ -601,10 +718,11 @@ def main() -> None:
     ap.add_argument("--wazuh", action="store_true")
     ap.add_argument("--port", type=int, default=8200)
     ap.add_argument("--min-devices", type=int, default=0, help="wait for this many devices before round 1")
+    ap.add_argument("--decision-engine", choices=["wazuh", "coordinator"], default="coordinator")
     args = ap.parse_args()
     cfg = RunConfig(rounds=args.rounds, round_seconds=args.round_seconds, wokwi=args.wokwi,
                     train=TrainConfig(epochs=args.epochs, lr=args.lr))
-    coord = Coordinator(cfg, wazuh=args.wazuh, min_devices=args.min_devices)
+    coord = Coordinator(cfg, wazuh=args.wazuh, min_devices=args.min_devices, engine=args.decision_engine)
     print(f"[coordinator] {coord.run_id} recording to {coord.bus.path}", flush=True)
     import uvicorn
     uvicorn.run(create_app(coord), host="127.0.0.1", port=args.port, log_level="warning", access_log=False)

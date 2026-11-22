@@ -1,0 +1,108 @@
+<!--
+  FL demo: Wazuh makes every security decision in real time.
+
+  These rules sit ON TOP of FinSentinel's own rules (finsentinel/deploy/wazuh/rules/finsentinel_rules.xml,
+  ids 100100-100140, unmodified). Each rule below is a more specific child, so Wazuh fires it instead
+  of the parent and the matching ACTIVE RESPONSE (demo/wazuh/manager_overlay.conf) runs the script
+  fl-decision, which writes the decision to /fl-decisions/decisions.jsonl. The demo coordinator reads
+  that file and ENFORCES the decision through FinSentinel's operator API. FinSentinel itself runs with
+  FINSENTINEL_HIGH_RISK_ACTION=pending_approval, so it only checks and reports.
+
+  Ids 100200-100299 are reserved for the demo.
+-->
+<group name="finsentinel,fl_decisions,">
+
+  <!-- ══ UPDATES THAT PASSED THE GATE ═══════════════════════════════════ -->
+
+  <!-- Clean update (risk LOW): approve it for aggregation. -->
+  <rule id="100201" level="5">
+    <if_sid>100118</if_sid>
+    <description>FL decision: APPROVE update $(update_id) from $(client_id) - all FinSentinel checks passed, anomaly score clean</description>
+    <group>fl_approve,</group>
+  </rule>
+
+  <!-- Anomalous update: quarantine it (never aggregated). -->
+  <rule id="100202" level="12">
+    <if_sid>100106</if_sid>
+    <description>FL decision: QUARANTINE update $(update_id) from $(client_id) - anomalous weight statistics</description>
+    <group>fl_quarantine,</group>
+    <mitre><id>T1565.001</id></mitre>
+  </rule>
+
+  <!-- Critical anomaly (all detector rules fired, e.g. poisoned weights): quarantine AND suspend the device. -->
+  <rule id="100211" level="14">
+    <if_sid>100106</if_sid>
+    <field name="severity">^critical$</field>
+    <description>FL decision: SUSPEND device $(client_id) - critical anomaly (model poisoning suspected), update $(update_id) quarantined</description>
+    <group>fl_suspend,</group>
+    <mitre><id>T1565.001</id></mitre>
+  </rule>
+
+  <!-- ══ ATTACKS STOPPED AT THE GATE ════════════════════════════════════ -->
+
+  <rule id="100203" level="12">
+    <if_sid>100105</if_sid>
+    <description>FL decision: REJECT replayed update $(update_id) claiming to be $(client_id) - replay attack blocked</description>
+    <group>fl_reject,</group>
+    <mitre><id>T1557</id></mitre>
+  </rule>
+
+  <rule id="100204" level="12">
+    <if_sid>100104, 100113, 100114</if_sid>
+    <description>FL decision: REJECT forged update claiming to be $(client_id) - signature/key verification failed</description>
+    <group>fl_reject,</group>
+    <mitre><id>T1036</id></mitre>
+  </rule>
+
+  <rule id="100205" level="12">
+    <if_sid>100112</if_sid>
+    <description>FL decision: REJECT tampered update $(update_id) for $(client_id) - payload hash mismatch</description>
+    <group>fl_reject,</group>
+    <mitre><id>T1565.002</id></mitre>
+  </rule>
+
+  <rule id="100206" level="10">
+    <if_sid>100107, 100108, 100117</if_sid>
+    <description>FL decision: REJECT malformed or out-of-policy update $(update_id) from $(client_id)</description>
+    <group>fl_reject,</group>
+  </rule>
+
+  <!-- Correlation on top of FinSentinel's brute-force rule. -->
+  <rule id="100212" level="14">
+    <if_sid>100140</if_sid>
+    <description>FL decision: ALERT - repeated forged updates in 60 s (last claimed $(client_id)); impersonation campaign</description>
+    <group>fl_alert,</group>
+  </rule>
+
+  <!-- ══ FL-LEVEL EVENTS FROM THE DEMO COORDINATOR (source = fl-coordinator) ══ -->
+
+  <rule id="100250" level="0">
+    <decoded_as>json</decoded_as>
+    <field name="source">^fl-coordinator$</field>
+    <description>FL coordinator event</description>
+    <group>fl_coordinator,</group>
+  </rule>
+
+  <rule id="100251" level="5">
+    <if_sid>100250</if_sid>
+    <field name="event_type">^fl.drift_dropout$</field>
+    <description>FL decision: ALERT - honest device $(client_id) absent because its own data drifted (drift-causal dropout); do not punish</description>
+    <group>fl_alert,</group>
+  </rule>
+
+  <rule id="100252" level="10">
+    <if_sid>100250</if_sid>
+    <field name="event_type">^fl.mitm_refused$</field>
+    <description>FL decision: ALERT - man-in-the-middle attempt: impostor certificate refused by a device</description>
+    <group>fl_alert,</group>
+    <mitre><id>T1557</id></mitre>
+  </rule>
+
+  <rule id="100253" level="7">
+    <if_sid>100250</if_sid>
+    <field name="event_type">^fl.tls_error$</field>
+    <description>FL decision: ALERT - device $(client_id) reported a refused TLS connection</description>
+    <group>fl_alert,</group>
+  </rule>
+
+</group>

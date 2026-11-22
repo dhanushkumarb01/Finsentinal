@@ -1,0 +1,2 @@
+*.sh text eol=lf
+wazuh/fl-decision text eol=lf

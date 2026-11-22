@@ -87,3 +87,43 @@ Mission Control reads `/config.json` from its own origin:
 * There is no separate "aggregating" event: a round is aggregating between the end of its
   submissions and its `round_completed`.
 * The coordinator allows CORS from `http://localhost:5180` and `http://127.0.0.1:5180`.
+
+---
+
+## v2 — Wazuh decides, one unified UI (2026-11-22)
+
+**Decision engine.** With `run_demo.py --wazuh` (default when Wazuh is up) FinSentinel only checks
+and reports (`FINSENTINEL_HIGH_RISK_ACTION=pending_approval`, the coordinator never auto-approves).
+FinSentinel's audit events → SIEM log → Wazuh rules → Wazuh **active response** writes a decision
+→ the coordinator enforces it through FinSentinel's operator API. Without Wazuh the engine is
+`coordinator` (v1 behaviour) and the UI must say so.
+
+New / extended events:
+```ts
+ | { type: "decision_engine"; engine: "wazuh" | "coordinator"; detail: string;
+     wazuh_dashboard?: string }                       // emitted once after run_started
+ | { type: "round_phase"; round: number; phase: "open" | "deciding" | "aggregating";
+     waiting_for?: string[] }                         // devices whose decision is still pending
+ | { type: "wazuh_decision"; device: string; update_id: string | null; round: number | null;
+     decision: "approve" | "quarantine" | "reject" | "suspend_device" | "alert";
+     rule_id: string; rule_level: number; rule_description: string; event_type: string;
+     enforced: boolean; enforcement_detail: string; latency_ms: number | null }
+// gate_result gains:   decided_by: "wazuh" | "coordinator" | "human" | "pending"
+// device_status.state may be "suspended" (Wazuh suspended the device; reason = rule id)
+// alert.source may be "wazuh"; component.name may be "wazuh"
+```
+`approval.actor` is e.g. `"wazuh rule 100201 (level 3)"`.
+
+**Security Console API** (coordinator, local only, `Authorization: Bearer <admin_token>`):
+- `GET /fl/admin/console` →
+  ```json
+  {"decision_engine": "wazuh", "wazuh": {"up": true, "decisions": 41, "last_decision_t": 1795.., "dashboard_url": "https://localhost"},
+   "finsentinel": {<FinSentinel GET /api/v1/operator/dashboard JSON, verbatim>},
+   "pending": [<FinSentinel GET /api/v1/updates/pending items, verbatim>],
+   "suspended": [{"device": "phone-03", "rule_id": "100211", "since_round": 7}],
+   "thresholds": {<config/thresholds.json finsentinel_env>},
+   "updates": [{"update_id","device","round","http_status","finsentinel_status","risk_score","severity",
+                "reasons","decision","decided_by","rule_id","t"}]}   // newest first, ≤ 300
+  ```
+- `POST /fl/admin/decision` (unchanged) = manual override, actor "presenter (Mission Control)".
+- `POST /fl/admin/unsuspend` `{"device"}`.

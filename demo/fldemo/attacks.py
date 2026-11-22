@@ -63,12 +63,14 @@ async def _gate_for_attack(coord, scene: str, target: str, update_id: str, rnd: 
                            payload: bytes, env: dict) -> None:
     from fldemo.coordinator import detail_text, gate_checks
     detail = detail_text(body)
+    coord.attack_ids[update_id] = f"{update_id}#{scene}"   # lets Wazuh's reject decision find this attack
     coord.bus.emit("update_submitted", device=target, round=rnd, update_id=f"{update_id}#{scene}",
                    payload_bytes=len(payload), payload_sha256=env.get("payload_sha256", ""), signed=True,
                    path="toxiproxy")
     coord.bus.emit("gate_result", device=target, round=rnd, update_id=f"{update_id}#{scene}", http_status=status,
                    checks=gate_checks(status, detail, None), risk_score=None, severity=None,
-                   approval_status=None, reasons=[], detail=detail[:300], source="attack")
+                   approval_status=None, reasons=[], detail=detail[:300], source="attack",
+                   decided_by="pending" if getattr(coord, "engine", "") == "wazuh" else "coordinator")
     outcome = "blocked" if status >= 400 else "accepted"
     coord.bus.emit("attack", scene=scene, phase="result", target=target, http_status=status, outcome=outcome,
                    detail=f"FinSentinel answered {status}: {detail[:200]}")
@@ -216,6 +218,10 @@ async def mitm(coord, target: str | None) -> dict:
     coord.bus.emit("attack", scene="mitm", phase="result", target=target, outcome="observed",
                    detail=f"tap captured {out['tap_bytes_captured']} bytes; readable data found: "
                           f"{'YES' if out['tap_plaintext_found'] else 'none (TLS ciphertext only)'}")
+    if out.get("device_refused") and getattr(coord, "engine", "") == "wazuh":
+        from fldemo.wazuh_engine import write_siem_event
+        write_siem_event("fl.mitm_refused", severity="high", client_id=target or "",
+                         description="impostor certificate (not issued by the pinned CA) refused")
     coord.bus.emit("attack", scene="mitm", phase="result", target=target,
                    outcome="refused" if out.get("device_refused") else "accepted",
                    detail="device refused the impostor's certificate (not signed by the pinned CA)"

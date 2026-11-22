@@ -272,9 +272,12 @@ def main() -> int:
     ap.add_argument("--rounds", type=int, default=30)
     ap.add_argument("--round-seconds", type=float, default=None, help="default 25 (90 with Wokwi boards)")
     ap.add_argument("--epochs", type=int, default=3)
-    ap.add_argument("--wazuh", action="store_true", help="also forward FinSentinel audit events to Wazuh")
+    ap.add_argument("--wazuh", action="store_true",
+                    help="start Wazuh (WSL) and let it make every security decision in real time")
     ap.add_argument("--no-devices", action="store_true", help="do not start the virtual phones")
-    ap.add_argument("--no-fs-ui", action="store_true", help="do not start FinSentinel's own web UI")
+    ap.add_argument("--no-fs-ui", action="store_true", help=argparse.SUPPRESS)  # kept for old commands
+    ap.add_argument("--fs-ui", action="store_true",
+                    help="also start FinSentinel's own web UI (not needed: Mission Control's Security Console replaces it)")
     args = ap.parse_args()
 
     problems = preflight(args)
@@ -347,6 +350,21 @@ def main() -> int:
         except httpx.HTTPError:
             pass
 
+    engine = "coordinator"
+    if args.wazuh:
+        say("  … starting Wazuh in WSL (first start can take several minutes)")
+        wsl_script = "/mnt/" + DEMO.drive[0].lower() + DEMO.as_posix()[2:] + "/wazuh/wazuh.sh"
+        r = subprocess.run(["wsl", "-d", "Ubuntu", "bash", wsl_script, "up"], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=900)
+        (LOG_DIR / "wazuh.log").write_text(r.stdout + r.stderr, encoding="utf-8")
+        if r.returncode == 0:
+            engine = "wazuh"
+            say("  ✓ Wazuh manager up — Wazuh makes every security decision", GREEN)
+        else:
+            say("  ✗ Wazuh did not come up (see demo/.state/logs/wazuh.log). Continuing with the coordinator "
+                "as decision engine — Mission Control will say so. One-time setup: "
+                "wsl -d Ubuntu bash " + wsl_script + " setup", RED)
+
     try:
         siem_env = {}
         if args.wazuh:
@@ -359,12 +377,14 @@ def main() -> int:
                             "FINSENTINEL_FORWARDER_PORT": str(FORWARDER_PORT)})
             procs.append(fwd)
             fwd.start()
-        if not up(Proc("finsentinel", [PY, "-m", "fldemo.fs_server", "--rounds", str(args.rounds), "--fresh"],
+        if not up(Proc("finsentinel", [PY, "-m", "fldemo.fs_server", "--rounds", str(args.rounds), "--fresh"]
+                       + (["--defer-decisions"] if engine == "wazuh" else []),
                        cwd=DEMO, env=siem_env),
                   f"http://127.0.0.1:{FS_PORT}/api/v1/health", "FinSentinel (security gate)", timeout=90):
             raise SystemExit(2)
         coord_cmd = [PY, "-m", "fldemo.coordinator", "--rounds", str(args.rounds), "--round-seconds", str(round_s),
-                     "--epochs", str(args.epochs), "--min-devices", "0" if args.no_devices else str(len(virtual))] + (["--wokwi"] if wokwi_on else []) + (["--wazuh"] if args.wazuh else [])
+                     "--epochs", str(args.epochs), "--min-devices", "0" if args.no_devices else str(len(virtual)),
+                     "--decision-engine", engine] + (["--wokwi"] if wokwi_on else []) + (["--wazuh"] if args.wazuh else [])
         if not up(Proc("coordinator", coord_cmd, cwd=DEMO), f"http://127.0.0.1:{COORD_PORT}/fl/state",
                   "Coordinator (rounds, signed models, event stream)", timeout=60):
             raise SystemExit(2)
@@ -394,14 +414,14 @@ def main() -> int:
         serve_static(MC_DIST, mc_cfg, MC_PORT)
         say(f"  ✓ Mission Control on http://localhost:{MC_PORT}", GREEN)
 
-        if not args.no_fs_ui and (FINSENTINEL_DIR / "frontend" / "node_modules").exists():
+        if args.fs_ui and (FINSENTINEL_DIR / "frontend" / "node_modules").exists():
             npm = shutil.which("npm.cmd" if IS_WIN else "npm") or "npm"
             ui = Proc("finsentinel-ui", [npm, "run", "dev", "--", "--port", str(FS_UI_PORT), "--strictPort"],
                       cwd=FINSENTINEL_DIR / "frontend", critical=False)
             procs.append(ui)
             ui.start()
             say(f"  ✓ FinSentinel UI starting on http://localhost:{FS_UI_PORT}", GREEN)
-        elif not args.no_fs_ui:
+        elif args.fs_ui:
             say("  - FinSentinel UI not installed (optional: npm ci in finsentinel/frontend)", YELLOW)
 
         if not args.no_devices:
@@ -421,8 +441,11 @@ def main() -> int:
                        json={"url": f"http://host.wokwi.internal:{CADDY_HTTP_PORT}"})
 
         say(f"\n{BOLD}{GREEN}ALL SYSTEMS READY{END}")
-        say(f"  Mission Control  → http://localhost:{MC_PORT}   (projector, F11)")
-        if not args.no_fs_ui:
+        say(f"  Mission Control  → http://localhost:{MC_PORT}   (Live · Security Console · Research)")
+        say(f"  Decision engine  → {'Wazuh (real-time SIEM decisions)' if engine == 'wazuh' else 'coordinator (Wazuh off)'}")
+        if engine == "wazuh":
+            say("  Wazuh dashboard  → https://localhost   (admin / see finsentinel/deploy/wazuh/.env.example)")
+        if args.fs_ui:
             say(f"  FinSentinel UI   → http://localhost:{FS_UI_PORT}   operator token in {STATE_DIR / 'secrets.json'}")
         say(f"  Attacks (CLI)    → demo\\.venv\\Scripts\\python demo\\attack.py <scene>")
         say(f"  Logs             → {LOG_DIR}")

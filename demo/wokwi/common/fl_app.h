@@ -3,6 +3,7 @@
 #pragma once
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+#include <sys/time.h>
 #include <HTTPClient.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -384,24 +385,27 @@ static bool readBeacon() {
   bs.ncand = 0; bs.curLen = 0; bs.curOverflow = false; bs.lines = 0;
   bool found = false;
   {
-    WiFiClientSecure ntfyTls;
-    ntfyTls.setCACert(CA_ROOTS);
+    // Plain HTTP on purpose: every beacon line is Ed25519-signed by the coordinator and is
+    // verified below against the pinned COORD_PUBKEY, so TLS adds no integrity here. (ntfy's
+    // SHA-384/P-384 certificate chain is too slow to verify on Wokwi's throttled CPU: the
+    // server closed the handshake after ~26 s.) A forged or replayed-old beacon is rejected.
+    WiFiClient ntfyTcp;
     HTTPClient http;
     char url[160];
-    snprintf(url, sizeof url, "https://ntfy.sh/%s/raw?poll=1&since=2h", BEACON_TOPIC);
+    snprintf(url, sizeof url, "http://ntfy.sh/%s/raw?poll=1&since=2h", BEACON_TOPIC);
     http.setConnectTimeout(HTTP_TIMEOUT_MS);
     http.setTimeout(HTTP_TIMEOUT_MS);
     unsigned long t0 = millis();
     int code = -1;
-    if (http.begin(ntfyTls, url)) {
+    if (http.begin(ntfyTcp, url)) {
       code = http.GET();
       if (code == 200) http.writeToStream(&bs);
       http.end();
     }
     bs.endLine();
     LOG("beacon GET -> %d, %d lines, %d candidates, %lu ms", code, bs.lines, bs.ncand, millis() - t0);
-    if (code <= 0) noteTlsError(ntfyTls, "ntfy.sh");
-    ntfyTls.stop();
+    if (code <= 0) LOG("beacon fetch failed (HTTP client error %d)", code);
+    ntfyTcp.stop();
   }
   for (int i = 0; i < bs.ncand && !found; i++) {
     char url[160], sigb64[100];
@@ -704,6 +708,18 @@ static void app_loop() {
   }
   fl::RoundInfo r;
   if (!fl::parse_round(gRoundJson, r)) { LOG("bad /fl/round JSON: %.200s", gRoundJson); return; }
+  // Wokwi runs slower than real time, so the clock set once by NTP drifts behind and
+  // FinSentinel rejects stale envelopes (403 "exceeds the permitted age"). Re-sync from the
+  // coordinator's server_time, which arrives over the certificate-checked TLS connection.
+  if (r.server_time > 1.7e9) {
+    time_t now = time(nullptr);
+    long long drift = (long long)r.server_time - (long long)now;
+    if (drift > 2 || drift < -2) {
+      struct timeval tv = {(time_t)r.server_time, 0};
+      settimeofday(&tv, nullptr);
+      LOG("clock re-synced from coordinator (was %+lld s off)", drift);
+    }
+  }
   if (r.round != gCurRound && strcmp(r.state, "open") != 0) {
     gCurRound = r.round;
   }

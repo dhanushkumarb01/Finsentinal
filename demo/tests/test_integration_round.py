@@ -51,3 +51,42 @@ def test_recording_contains_every_event(summary):
     for t in ("run_started", "round_started", "local_training", "update_submitted", "gate_result",
               "approval", "round_completed", "global_eval", "attack", "device_status", "run_finished"):
         assert t in summary["event_types"], t
+
+
+# ----------------------------------------------------------------------------- Wazuh decides
+@pytest.fixture(scope="module")
+def wazuh_summary(tmp_path_factory):
+    """Same run with engine=wazuh; decisions come from the test-only stand-in that applies the demo's
+    real rule/response config (tests/wazuh_standin.py) to FinSentinel's real audit events."""
+    tmp = tmp_path_factory.mktemp("itw")
+    env = {**os.environ, "FLDEMO_STATE_DIR": str(tmp / "state"), "FLDEMO_RECORDINGS_DIR": str(tmp / "rec"),
+           "IT_ROUNDS": "3", "IT_ENGINE": "wazuh", "OMP_NUM_THREADS": "1"}
+    p = subprocess.run([sys.executable, str(HERE / "integration_round.py")], env=env, capture_output=True,
+                       text=True, timeout=600)
+    line = next((ln for ln in p.stdout.splitlines() if ln.startswith("SUMMARY ")), None)
+    assert line, f"no summary\nSTDOUT:{p.stdout[-3000:]}\nSTDERR:{p.stderr[-5000:]}"
+    return json.loads(line[8:])
+
+
+def test_wazuh_mode_every_approval_is_a_wazuh_decision(wazuh_summary):
+    assert wazuh_summary["engine"] == "wazuh"
+    assert wazuh_summary["approval_actors"] and all(a.startswith("wazuh rule") for a in wazuh_summary["approval_actors"])
+    assert wazuh_summary["aggregated_rounds"] >= 2
+    assert wazuh_summary["accuracy"][-1] > wazuh_summary["accuracy"][0] + 0.2
+
+
+def test_wazuh_mode_poison_suspends_device(wazuh_summary):
+    assert ["suspend_device", "100211"] in wazuh_summary["wazuh_decisions"]
+    assert "phone-03" in wazuh_summary["suspended"] and "phone-03" in wazuh_summary["quarantined"]
+
+
+def test_wazuh_mode_attacks_rejected_and_enforced(wazuh_summary):
+    assert wazuh_summary["attack_rejects"] == ["forge", "replay", "tamper"]
+    assert wazuh_summary["wazuh_enforced_all"] is True
+
+
+def test_security_console_api(wazuh_summary):
+    assert {"decision_engine", "wazuh", "finsentinel", "pending", "suspended", "thresholds", "updates"} <= set(
+        wazuh_summary["console_keys"])
+    assert wazuh_summary["console_rows"] >= 10
+    assert wazuh_summary["console_has_fs_dashboard"] is True

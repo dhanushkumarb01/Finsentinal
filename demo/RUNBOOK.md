@@ -9,11 +9,10 @@
 
 | Window | What it is | Address |
 |---|---|---|
-| Mission Control | The big screen for the audience | http://localhost:5180 |
-| FinSentinel UI (optional) | The security guard's own control panel | http://localhost:5173 |
+| Mission Control | The ONE screen: **Live** (audience), **Security Console** (FinSentinel + Wazuh decisions; replaces FinSentinel's UI), **Research** | http://localhost:5180 |
 | Wokwi tabs (2–3) | The ESP32 boards | wokwi.com |
 | Terminal | Runs everything; **Ctrl+C stops everything** | — |
-| Wazuh (optional) | Professional security log room | https://localhost |
+| Wazuh dashboard | The SIEM that makes every security decision (its own detailed view) | https://localhost |
 
 ---
 
@@ -56,11 +55,11 @@
    | `--wokwi cloudflare` | use Cloudflare's tunnel instead of localhost.run (blocked on the current hotspot) |
    | `--rounds 20` | number of rounds (default 30) |
    | `--round-seconds 40` | round length (default 25 s; 90 s when boards are on) |
-   | `--wazuh` | also send FinSentinel's audit events to Wazuh (section D) |
+   | `--wazuh` | **Wazuh decides** every update and attack in real time (section D). Without it the coordinator decides and the screen says so |
 
 2. **Open the screens** ✅ *(Mission Control live stream + buttons verified)*
    - Mission Control → http://localhost:5180 (projector, full screen with **F11**)
-   - FinSentinel UI → http://localhost:5173 — operator token: `demo\.state\secrets.json` → `operator_token`
+   - Security Console → the **Security Console** tab in Mission Control (FinSentinel results, Wazuh decisions, manual override)
 
 3. **Start the Wokwi boards** ⏳ *(firmware built + host-tested; first live board run pending)* (2–3 browser tabs, Chrome is fastest)
    - For each `demo\wokwi\board1`, `board2`, `board3`: wokwi.com → **New Project → ESP32** →
@@ -91,16 +90,43 @@ Any `run-*.jsonl` recording works the same way.
 
 ---
 
-## D. Demo day with Wazuh (optional, heavy)
+## D. Wazuh makes the decisions
 
-1. Pause the research sweep first (it needs the memory).
-2. In `finsentinel\deploy\wazuh\.env` set the SIEM log directory to
-   `C:\Users\Dhanush\drift-causal-fl\demo\.state\siem` (as seen from WSL:
-   `/mnt/c/Users/Dhanush/drift-causal-fl/demo/.state/siem`), then start Wazuh as described in
-   `finsentinel\deploy\wazuh\README.md`.
-3. `demo\.venv\Scripts\python demo\run_demo.py --wazuh` — FinSentinel's own SIEM forwarder
-   writes `finsentinel-siem.jsonl` there; Wazuh picks it up.
-4. Wazuh dashboard → https://localhost.
+**How it works:** FinSentinel checks every update and reports. Its audit events flow to Wazuh.
+Wazuh's rules (`demo/wazuh/fl_decisions.xml`, layered on FinSentinel's own rules) decide in real time:
+approve, quarantine, reject, or suspend the device. Wazuh's active response writes the decision, and
+the coordinator only carries it out through FinSentinel's operator API. Every decision names its
+Wazuh rule (e.g. "wazuh rule 100211 (level 14)").
+
+**Before using Wazuh: pause the research sweep** (Wazuh needs ~4–6 GB RAM). The sweep
+checkpoints every 10 rounds and resumes exactly:
+1. In the terminal where the sweep runs, press **Ctrl+C** (or close that window).
+2. Afterwards, resume it with the same command:
+   ```powershell
+   cd C:\Users\Dhanush\drift-causal-fl\drift-causal-fl
+   .venv\Scripts\python scripts\run_sweep.py --config configs/mvp.yaml --workers 4 --threads 1 --max-concurrent flfdms=1
+   ```
+
+**One-time setup** (installs Docker Engine in WSL Ubuntu and asks for your Ubuntu password; the
+first image download takes 10–30 min):
+```powershell
+wsl -d Ubuntu bash /mnt/c/Users/Dhanush/drift-causal-fl/demo/wazuh/wazuh.sh setup
+```
+It runs FinSentinel's own `setup-wsl.sh` (unmodified) with the SIEM log pointed at
+`demo\.state\siem`, then overlays the demo's decision rules and active response.
+
+**Every time:** `demo\.venv\Scripts\python demo\run_demo.py --wazuh`. It starts Wazuh for you
+(`wazuh.sh up`) and waits for it. Check anytime:
+```powershell
+wsl -d Ubuntu bash /mnt/c/Users/Dhanush/drift-causal-fl/demo/wazuh/wazuh.sh status      # containers + API
+wsl -d Ubuntu bash /mnt/c/Users/Dhanush/drift-causal-fl/demo/wazuh/wazuh.sh logtest     # which rule fires for sample events
+wsl -d Ubuntu bash /mnt/c/Users/Dhanush/drift-causal-fl/demo/wazuh/wazuh.sh decisions   # last decisions Wazuh made
+```
+Wazuh dashboard → https://localhost (user `admin`, local default password from
+`finsentinel\deploy\wazuh\.env.example`). Stop Wazuh: `wazuh.sh down`.
+
+If Wazuh does not come up, the launcher prints a red line and continues with the coordinator as
+decision engine; Mission Control shows "Wazuh offline — coordinator decides".
 
 ---
 

@@ -52,6 +52,9 @@ CA_NAMES = [
     "DigiCert Global Root G2", "DigiCert Global Root CA",
     "USERTrust RSA Certification Authority", "USERTrust ECC Certification Authority",
     "Baltimore CyberTrust Root",
+    # *.lhr.life (localhost.run) is served with an Amazon RSA 2048 chain (checked 2026-11-22)
+    "Amazon Root CA 1", "Amazon Root CA 2", "Amazon Root CA 3", "Amazon Root CA 4",
+    "Starfield Services Root Certificate Authority - G2",
 ]
 LIBRARIES = ["Crypto", "Adafruit SSD1306", "Adafruit GFX Library", "Adafruit MPU6050",
              "Adafruit Unified Sensor", "Adafruit BusIO"]

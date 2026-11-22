@@ -93,7 +93,7 @@ topic named in `demo/.state/beacon.json` (random, secret; also in `board_secrets
 FLB1|<https url without trailing slash>|<unix seconds>|<base64 Ed25519 signature>
 ```
 signature = coordinator key over the UTF-8 string `FLB1|<url>|<unix seconds>`.
-Board: `GET https://ntfy.sh/<topic>/raw?poll=1&since=2h` → one message per line → take the **last**
+Board: `GET http://ntfy.sh/<topic>/raw?poll=1&since=2h` (plain HTTP on purpose — integrity comes from the Ed25519 signature; ntfy's SHA-384/P-384 certificate chain is too slow to verify on Wokwi's throttled CPU, the server closed the handshake after ~26 s) → one message per line → take the **last**
 line that verifies with the pinned coordinator key and whose timestamp is newest. Re-read the
 beacon whenever a request to the current URL fails twice. A forged beacon cannot redirect a
 board (signature), and model downloads are separately signed.
@@ -103,5 +103,6 @@ board (signature), and model downloads are separately signed.
 * Virtual devices: connect to `https://localhost:<9100+i>`; trust ONLY the demo CA
   (`demo/.state/tls/ca.crt`). Any other certificate → handshake refused (`tls_error`).
 * Boards: `WiFiClientSecure::setCACert()` with the public-root bundle in
-  `demo/wokwi/common/ca_roots.h` (generated from certifi: ISRG Root X1/X2, GTS R1–R4,
-  DigiCert Global Root G2, USERTrust RSA/ECC, Baltimore). No `setInsecure()` in the real firmware.
+  `demo/wokwi/common/ca_roots.h` (generated from certifi: ISRG Root X1/X2, GTS R1/R3/R4,
+  DigiCert Global Root G2, USERTrust RSA/ECC, Amazon Root CA 1–4, Starfield Services G2 —
+  `*.lhr.life` is served with an Amazon RSA 2048 chain). No `setInsecure()` in the real firmware.

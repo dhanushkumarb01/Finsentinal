@@ -28,6 +28,7 @@ from fldemo import fs_boot  # noqa: E402
 from fldemo.settings import FS_DB, load_devices  # noqa: E402
 
 ROUNDS = int(os.environ.get("IT_ROUNDS", "3"))
+ENGINE = os.environ.get("IT_ENGINE", "coordinator")   # "wazuh": test-only stand-in makes the decisions
 VIRTUAL = [d["id"] for d in load_devices() if d["kind"] == "virtual"]
 
 
@@ -35,7 +36,7 @@ def main() -> None:
     K.ensure_secrets()
     K.ensure_device_keys([d["id"] for d in load_devices()])
     from fldemo.fs_server import build_env
-    env = build_env(ROUNDS)
+    env = build_env(ROUNDS, defer_decisions=ENGINE == "wazuh")
     env["FINSENTINEL_AUDIT_DELIVERY_WORKER_ENABLED"] = "0"
     fs_boot.boot(FS_DB, env)
 
@@ -62,7 +63,17 @@ def main() -> None:
     cfg = RunConfig(rounds=ROUNDS, round_seconds=20, min_round_seconds=1.0, grace_seconds=0.5, pause_seconds=0.3,
                     train=TrainConfig(epochs=2, lr=0.1))
     fs_client = httpx.AsyncClient(transport=httpx.ASGITransport(app=fs_app), base_url="http://fs")
-    coord = Coordinator(cfg, fs_client=fs_client)
+    coord = Coordinator(cfg, fs_client=fs_client, engine=ENGINE, decision_timeout=15)
+    standin_stop = threading.Event()
+    if ENGINE == "wazuh":
+        sys.path.insert(0, str(DEMO / "tests"))
+        from wazuh_standin import run_on_finsentinel_db
+        from fldemo.wazuh_engine import DECISIONS_FILE
+        import core.supabase.connection as fsconn
+        DECISIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        DECISIONS_FILE.touch()
+        threading.Thread(target=run_on_finsentinel_db, args=(fsconn.engine, DECISIONS_FILE, standin_stop),
+                         daemon=True).start()
     coord.gateway = "http://fs"            # attacks go straight to FinSentinel (no Caddy here)
     coord_app = create_app(coord)
 
@@ -104,9 +115,12 @@ def main() -> None:
                 attacked = True
         for t in threads:
             t.join(timeout=30)
+        cons = client.get("/fl/admin/console", headers=admin)
+        console = cons.json() if cons.status_code == 200 else {"error": cons.status_code}
         evs = coord.bus.events
 
     A._post_update = _orig
+    standin_stop.set()
     types = [e["type"] for e in evs]
     evals = [e for e in evs if e["type"] == "global_eval"]
     gates = [e for e in evs if e["type"] == "gate_result"]
@@ -123,6 +137,16 @@ def main() -> None:
         "recording": str(coord.bus.path),
         "recording_lines": sum(1 for _ in open(coord.bus.path, encoding="utf-8")),
         "events": len(evs),
+        "engine": ENGINE,
+        "console_keys": sorted(console.keys()),
+        "console_rows": len(console.get("updates", [])),
+        "console_has_fs_dashboard": isinstance(console.get("finsentinel"), dict) and "error" not in console.get("finsentinel", {}),
+        "wazuh_decisions": sorted({(e["decision"], e["rule_id"]) for e in evs if e["type"] == "wazuh_decision"}),
+        "wazuh_enforced_all": all(e["enforced"] for e in evs if e["type"] == "wazuh_decision"),
+        "approval_actors": sorted({e["actor"].split(" (")[0] for e in evs if e["type"] == "approval"}),
+        "suspended": [e["device"] for e in evs if e["type"] == "device_status" and e.get("state") == "suspended"],
+        "attack_rejects": sorted({e["update_id"].split("#")[-1] for e in evs if e["type"] == "wazuh_decision"
+                                  and e["decision"] == "reject" and e.get("update_id") and "#" in e["update_id"]}),
     }
     print("SUMMARY " + json.dumps(summary), flush=True)
     asyncio.run(fs_client.aclose())

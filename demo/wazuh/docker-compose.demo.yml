@@ -1,0 +1,14 @@
+# Overlay on finsentinel/deploy/wazuh/docker-compose.yml (used unmodified):
+#   docker compose -f <finsentinel>/docker-compose.yml -f demo/wazuh/docker-compose.demo.yml up -d
+# Adds the FL-decision rules, the active-response script and its output folder to the manager,
+# and swaps in ossec.conf = FinSentinel's manager config + demo/wazuh/manager_overlay.conf.
+# FLDEMO_LINUX_DIR = Linux-filesystem copy made by wazuh.sh (correct permissions, not drvfs).
+services:
+  wazuh.manager:
+    volumes:
+      - ${FLDEMO_LINUX_DIR}/ossec.conf:/wazuh-config-mount/etc/ossec.conf
+      - ${FLDEMO_LINUX_DIR}/fl_decisions.xml:/var/ossec/etc/rules/fl_decisions.xml
+      - ${FLDEMO_LINUX_DIR}/fl-decision:/var/ossec/active-response/bin/fl-decision
+      - type: bind
+        source: "${FLDEMO_DECISIONS_DIR}"
+        target: /fl-decisions

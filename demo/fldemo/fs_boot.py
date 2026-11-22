@@ -44,7 +44,7 @@ def base_env(*, operator_token: str, rounds: int, extra: Mapping[str, str] | Non
     }
     if extra:
         env.update(extra)
-    return env
+    return env  # note: extra may override FINSENTINEL_HIGH_RISK_ACTION (Wazuh mode)
 
 
 def boot(db_file: Path, env: Mapping[str, str]) -> None:

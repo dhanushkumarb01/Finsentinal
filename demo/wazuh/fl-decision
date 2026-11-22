@@ -1,0 +1,65 @@
+#!/var/ossec/framework/python/bin/python3
+"""Wazuh active-response script: record Wazuh's real-time FL decision.
+
+Installed to /var/ossec/active-response/bin/fl-decision by demo/wazuh/wazuh.sh. Wazuh's execd
+runs it for the rules in demo/wazuh/fl_decisions.xml and passes one JSON message on stdin
+(Wazuh >= 4.2 format). The decision itself is the extra_args value configured per command
+(approve | quarantine | suspend_device | reject | alert). This script only RECORDS the decision
+in /fl-decisions/decisions.jsonl (bind-mounted to demo/.state/wazuh on Windows); the demo
+coordinator enforces it through FinSentinel's operator API. Stateless: no check_keys handshake.
+"""
+
+import json
+import os
+import sys
+import time
+
+OUT = os.environ.get("FL_DECISIONS_FILE", "/fl-decisions/decisions.jsonl")
+LOG = "/var/ossec/logs/active-responses.log"
+
+
+def log(msg: str) -> None:
+    try:
+        with open(LOG, "a") as f:
+            f.write(f"{time.strftime('%Y/%m/%d %H:%M:%S')} fl-decision: {msg}\n")
+    except OSError:
+        pass
+
+
+def main() -> int:
+    line = sys.stdin.readline()
+    try:
+        msg = json.loads(line)
+    except ValueError:
+        log(f"bad input: {line[:200]!r}")
+        return 1
+    params = msg.get("parameters", {})
+    alert = params.get("alert", {})
+    rule = alert.get("rule", {})
+    data = alert.get("data", {})
+    extra = params.get("extra_args") or ["alert"]
+    rec = {
+        "t": time.time(),
+        "command": msg.get("command"),
+        "decision": extra[0],
+        "rule_id": str(rule.get("id", "")),
+        "rule_level": int(rule.get("level", 0) or 0),
+        "rule_description": rule.get("description", ""),
+        "event_type": data.get("event_type", ""),
+        "client_id": data.get("client_id") or "",
+        "update_id": data.get("update_id") or "",
+        "event_id": data.get("idempotency_key") or data.get("event_id") or "",
+        "alert_id": alert.get("id", ""),
+        "alert_timestamp": alert.get("timestamp", ""),
+    }
+    if msg.get("command") != "add":
+        return 0
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    with open(OUT, "a") as f:
+        f.write(json.dumps(rec, separators=(",", ":")) + "\n")
+    log(f"{rec['decision']} rule={rec['rule_id']} client={rec['client_id']} update={rec['update_id']}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
